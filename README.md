@@ -19,7 +19,7 @@ Hệ thống được chia theo:
 # Các tài nguyên về âm thanh / Test đầu vào
 Tất cả các tài nguyên về âm thanh/Test đầu vào đều được lưu tại GG Drive đường link sau
 https://docs.google.com/document/d/1wVXhM0sLVuertcllADlHFhrb_8LdSkkemB3I88Uobk4/edit?usp=sharing
-
+https://drive.google.com/drive/folders/1lMzkNrYQ0uvmpgP4986Gtf3IqhPo9vjZ?usp=sharing
 # BE lưu đáp án ở phần bài tập tự luận (Optional)
 Người dùng nhập phiên âm vd /watashi/ FE chuyển đổi sang chữ nhật và gửi tới BE
 Tất cả dữ liệu dùng UTF-8 để hiển thị đúng tiếng Nhật
