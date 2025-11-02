@@ -1,0 +1,15 @@
+﻿{
+  "description": "Xem video hướng dẫn chào hỏi cơ bản bằng tiếng Nhật và nhắc lại theo người bản xứ.",
+  "video": {
+    "embedUrl": "https://www.youtube.com/embed/VkH2dJ8M_2Q",
+    "duration": "08:32",
+    "progress": "00:00"
+  },
+  "summary": {
+    "items": [
+      "Ghi nhớ cách đọc chuẩn lời chào và câu kết thúc khi làm quen.",
+      "Quan sát khẩu hình miệng để điều chỉnh phát âm.",
+      "Lặp lại từng câu ít nhất ba lần để quen nhịp." ],
+    "tip": "Đừng ngại nói to – phát âm rõ ràng giúp bạn tự tin hơn khi gặp người Nhật."
+  }
+}

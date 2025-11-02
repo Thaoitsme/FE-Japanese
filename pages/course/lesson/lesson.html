@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học | Nihongo AI</title>
+    <link rel="stylesheet" href="../../../assets/css/styles.css">
+    <link rel="stylesheet" href="../../../assets/css/course.css">
+</head>
+<body class="course-shell">
+    <header class="course-topbar">
+        <div class="topbar-left">
+            <a class="topbar-back" href="../index.html">↵ Quay lại khóa học</a>
+            <div class="topbar-meta" data-lesson-meta>
+                <p class="topbar-unit">Đang tải...</p>
+                <h1>Bài học</h1>
+            </div>
+        </div>
+        <nav class="topbar-tabs" role="tablist">
+            <button class="lesson-tab is-active" id="tab-theory" type="button" data-tab-target="#panel-theory" aria-current="true">Lý thuyết</button>
+            <button class="lesson-tab" id="tab-simulation" type="button" data-tab-target="#panel-simulation">Mô phỏng</button>
+            <button class="lesson-tab" id="tab-practice" type="button" data-tab-target="#panel-practice">Bài tập</button>
+        </nav>
+    </header>
+
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle data-toggle-variant="text" aria-expanded="true">
+        Ẩn mục lục
+    </button>
+
+    <div class="course-body">
+        <aside class="course-sidebar" id="lesson-sidebar" aria-label="Chương trình học"></aside>
+
+        <main class="course-main">
+            <div id="lesson-loading" class="lesson-loading" aria-live="polite">Đang tải nội dung bài học...</div>
+
+            <section id="panel-theory" class="lesson-section" aria-labelledby="tab-theory"></section>
+            <section id="panel-simulation" class="lesson-section" aria-labelledby="tab-simulation"></section>
+            <section id="panel-practice" class="lesson-section" aria-labelledby="tab-practice"></section>
+
+        </main>
+    </div>
+
+    <button class="assistant-fab" type="button" aria-controls="assistant-panel" aria-expanded="false">💬</button>
+    <section class="assistant-panel" id="assistant-panel" hidden>
+        <header class="assistant-panel-header">
+            <h3>Sensei AI · Trợ lý học tập</h3>
+            <button type="button" class="assistant-close" data-close-assistant aria-label="Đóng trợ lý">×</button>
+        </header>
+        <div class="assistant-messages" data-assistant-messages>
+            <div class="assistant-message">
+                <p>Xin chào! Tôi là Sensei AI. Bạn có muốn hỏi gì về bài học này không?</p>
+            </div>
+        </div>
+        <form class="assistant-form" data-assistant-form>
+            <label class="sr-only" for="assistant-input">Câu hỏi</label>
+            <textarea id="assistant-input" rows="3" placeholder="Hỏi về bài học..."></textarea>
+            <button type="submit" class="btn btn-primary">Gửi</button>
+        </form>
+    </section>
+<script type="module" src="./js/lesson.js"></script>
+</body>
+</html>

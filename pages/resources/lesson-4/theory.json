@@ -1,0 +1,59 @@
+﻿{
+  "heading": {
+    "title": "Lý thuyết · Chào hỏi cơ bản",
+    "description": "Ôn tập từ vựng, mẫu câu và hội thoại ngắn khi tự giới thiệu bản thân."
+  },
+  "vocab": [
+    { "word": "わたし", "romaji": "watashi", "meaning": "Tôi" },
+    { "word": "あなた", "romaji": "anata", "meaning": "Bạn / Anh / Chị" },
+    { "word": "～さん", "romaji": "~san", "meaning": "Hậu tố lịch sự sau tên" },
+    { "word": "にほんじん", "romaji": "nihonjin", "meaning": "Người Nhật" },
+    { "word": "アメリカじん", "romaji": "amerika-jin", "meaning": "Người Mỹ" },
+    { "word": "はじめまして", "romaji": "hajimemashite", "meaning": "Rất vui được gặp bạn" },
+    { "word": "どうぞよろしくおねがいします", "romaji": "douzo yoroshiku onegaishimasu", "meaning": "Rất mong được giúp đỡ" },
+    { "word": "です", "romaji": "desu", "meaning": "Là" },
+    { "word": "か", "romaji": "ka", "meaning": "Trợ từ hỏi" }
+  ],
+  "grammar": [
+    {
+      "title": "Giới thiệu tên",
+      "structure": "わたしは [Tên] です。",
+      "romaji": "watashi wa [Tên] desu.",
+      "translation": "Tôi là [Tên]."
+    },
+    {
+      "title": "Hỏi quốc tịch",
+      "structure": "[Tên] さん は [Quốc tịch] ですか。",
+      "romaji": "[Tên] san wa [Quốc tịch] desu ka.",
+      "translation": "Anh/Chị [Tên] là người [nước] à?"
+    },
+    {
+      "title": "Trả lời ngắn",
+      "structure": "はい、そうです。 / いいえ、ちがいます。",
+      "romaji": "hai, sou desu. / iie, chigaimasu.",
+      "translation": "Vâng, đúng vậy. / Không, không phải."
+    },
+    {
+      "title": "Câu kết khi làm quen",
+      "structure": "どうぞよろしくおねがいします。",
+      "romaji": "douzo yoroshiku onegaishimasu.",
+      "translation": "Rất mong được giúp đỡ."
+    }
+  ],
+  "tips": [
+    "“はじめまして (hajimemashite)” dùng khi gặp lần đầu.",
+    "“どうぞよろしくおねがいします (douzo yoroshiku onegaishimasu)” dùng để kết thúc phần giới thiệu.",
+    "Khi đặt câu hỏi, nhớ thêm trợ từ “か (ka)” cuối câu."
+  ],
+  "conversation": {
+    "audio": "https://drive.google.com/uc?export=download&id=1n1hlbUxBwj_dUKCAVCHX3KdNY-AddQcr",
+    "lines": [
+      { "speaker": "A", "jp": "こんにちは", "romaji": "konnichiwa", "vi": "Xin chào" },
+      { "speaker": "B", "jp": "こんにちは", "romaji": "konnichiwa", "vi": "Xin chào" },
+      { "speaker": "A", "jp": "わたしは すずき よた です。 はじめまして。", "romaji": "watashi wa suzuki yota desu. hajimemashite.", "vi": "Tôi là Suzuki Yota. Rất vui được gặp anh." },
+      { "speaker": "B", "jp": "わたしは ジェイソン ミラー です。 はじめまして。 どうぞ よろしく。", "romaji": "watashi wa jeison miraa desu. hajimemashite. douzo yoroshiku.", "vi": "Tôi là Jason Miller. Rất hân hạnh được biết anh." },
+      { "speaker": "A", "jp": "ミラーさん、あなたは アメリカじん ですか。", "romaji": "miraa-san, anata wa amerika-jin desu ka.", "vi": "Anh Miller là người Mỹ à?" },
+      { "speaker": "B", "jp": "はい、 わたしは アメリカじん です。 あなたは？", "romaji": "hai, watashi wa amerika-jin desu. anata wa?", "vi": "Vâng, tôi là người Mỹ. Còn anh thì sao?" }
+    ]
+  }
+}

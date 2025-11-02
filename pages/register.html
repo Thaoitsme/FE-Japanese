@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký | Nihongo AI Learning</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+</head>
+<body class="auth-page">
+    <a class="brand brand-floating" href="index.html">
+        <span class="brand-icon">🌸</span>
+        <span class="brand-name">Nihongo</span>
+    </a>
+
+    <main class="auth-container">
+        <section class="auth-modal">
+            <button class="modal-close" data-close-modal aria-label="Đóng cửa sổ">&times;</button>
+            <header class="auth-modal-header">
+                <h1>Tạo tài khoản mới</h1>
+                <p>Bắt đầu hành trình học tiếng Nhật cùng AI Learning.</p>
+            </header>
+
+            <form id="register-form" class="auth-form" data-auth-form="register" data-redirect-url="login.html" novalidate>
+                <div class="form-group">
+                    <label for="register-fullname">Họ và tên</label>
+                    <input id="register-fullname" name="fullName" type="text" placeholder="Nguyễn Văn A" required autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input id="register-email" name="email" type="email" placeholder="your@email.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="register-password">Mật khẩu</label>
+                    <input id="register-password" name="password" type="password" placeholder="Tạo mật khẩu mạnh" required autocomplete="new-password" minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="register-confirm">Xác nhận mật khẩu</label>
+                    <input id="register-confirm" name="confirmPassword" type="password" placeholder="Nhập lại mật khẩu" required autocomplete="new-password" minlength="6">
+                </div>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="acceptTerms" required>
+                    <span>Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a>.</span>
+                </label>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="subscribe">
+                    <span>Nhận thông tin khóa học và ưu đãi qua email.</span>
+                </label>
+
+                <div class="form-message" data-form-message></div>
+
+                <button type="submit" class="btn-auth">Tạo tài khoản</button>
+
+                <p class="form-footer">
+                    Đã có tài khoản?
+                    <a href="login.html">Đăng nhập ngay</a>
+                </p>
+            </form>
+        </section>
+    </main>
+
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

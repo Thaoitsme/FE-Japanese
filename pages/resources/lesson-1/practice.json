@@ -1,0 +1,46 @@
+{
+  "progressPercent": 22,
+  "sections": [
+    {
+      "title": "Phần A - Trắc nghiệm",
+      "type": "multiple",
+      "questions": [
+        {
+          "questionId": "a1",
+          "prompt": "Câu 1: Chữ お được đọc là?",
+          "choices": [
+            { "label": "a", "value": "a", "text": "a" },
+            { "label": "b", "value": "b", "text": "i" },
+            { "label": "c", "value": "c", "text": "e" },
+            { "label": "d", "value": "d", "text": "o" }
+          ],
+          "answer": "d"
+        },
+        {
+          "questionId": "a2",
+          "prompt": "Câu 2: Từ いえ (ie) có nghĩa là gì?",
+          "choices": [
+            { "label": "a", "value": "a", "text": "Trên" },
+            { "label": "b", "value": "b", "text": "Nhà" },
+            { "label": "c", "value": "c", "text": "Nhà ga" },
+            { "label": "d", "value": "d", "text": "Tình yêu" }
+          ],
+          "answer": "b"
+        }
+      ]
+    },
+    {
+      "title": "Phần B - Tự luận",
+      "type": "writing",
+      "questions": [
+        {
+          "questionId": "b3",
+          "prompt": "Câu 3: Hãy viết nghĩa tiếng Việt của từ うえ (ue).",
+          "answer": "Trên"
+        }
+      ]
+    }
+  ],
+  "previousLessonUrl": "#",
+  "nextLessonUrl": "#"
+}

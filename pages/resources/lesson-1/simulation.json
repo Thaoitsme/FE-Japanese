@@ -1,0 +1,18 @@
+﻿{
+  "description": "Bài 1: 5 Nguyên âm cơ bản (あ · い · う · え · お)",
+  "video": {
+    "source": "https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4",
+    "poster": "../../../assets/images/lesson-1-poster.jpg",
+    "duration": "30:00",
+    "progress": "10:23"
+  },
+  "summary": {
+    "items": [
+      "Tổng quan hệ thống chữ viết tiếng Nhật.",
+      "5 nguyên âm cơ bản: あ, い, う, え, お.",
+      "Thứ tự viết nét chuẩn từng âm.",
+      "Từ vựng đơn giản ứng dụng ngay."
+    ],
+    "tip": "Lặp lại phát âm nhiều lần và luyện viết tay để ghi nhớ nhanh."
+  }
+}

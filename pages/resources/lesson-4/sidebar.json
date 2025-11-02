@@ -1,0 +1,36 @@
+﻿{
+  "chapters": [
+    {
+      "id": 1,
+      "title": "CHƯƠNG 1 · Làm quen với tiếng Nhật & phát âm cơ bản",
+      "completedLessons": 1,
+      "totalLessons": 1,
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Bài 1: Làm quen với tiếng Nhật & 5 nguyên âm đầu tiên (あ · い · う · え · お)",
+          "duration": "30p",
+          "status": "complete",
+          "link": "./lesson.html?lesson=lesson-1"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "CHƯƠNG 4 · Tự giới thiệu bản thân bằng tiếng Nhật cực dễ",
+      "completedLessons": 0,
+      "totalLessons": 5,
+      "isCurrent": true,
+      "lessons": [
+        {
+          "id": 401,
+          "title": "Bài 1: Chào hỏi cơ bản",
+          "duration": "35p",
+          "status": "pending",
+          "isCurrent": true,
+          "link": "./lesson.html?lesson=lesson-4"
+        }
+      ]
+    }
+  ]
+}

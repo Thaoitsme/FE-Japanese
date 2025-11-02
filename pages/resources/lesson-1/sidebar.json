@@ -1,0 +1,67 @@
+﻿{
+  "chapters": [
+    {
+      "id": 1,
+      "title": "CHƯƠNG 1 · Làm quen với tiếng Nhật & phát âm cơ bản",
+      "completedLessons": 1,
+      "totalLessons": 1,
+      "isCurrent": true,
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Bài 1: Làm quen với tiếng Nhật & 5 nguyên âm đầu tiên (あ · い · う · え · お)",
+          "duration": "30p",
+          "status": "complete",
+          "isCurrent": true,
+          "link": "./lesson.html?lesson=lesson-1"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "CHƯƠNG 2 · Bảng chữ cái Hiragana cơ bản (あ〜ん)",
+      "completedLessons": 5,
+      "totalLessons": 10,
+      "lessons": [
+        { "id": 2, "title": "Bài 2: Hàng か〜こ (ka-ko) – Học hàng K", "duration": "30p", "status": "complete", "link": "#" },
+        { "id": 3, "title": "Bài 3: Hàng さ〜そ (sa-so) – Học hàng S", "duration": "30p", "status": "complete", "link": "#" },
+        { "id": 4, "title": "Bài 4: Hàng た〜と (ta-to) – Học hàng T", "duration": "30p", "status": "complete", "link": "#" },
+        { "id": 5, "title": "Bài 5: Hàng な〜の (na-no) – Học hàng N", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 6, "title": "Bài 6: Hàng は〜ほ (ha-ho) – Học hàng H", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 7, "title": "Bài 7: Hàng ま〜も (ma-mo) – Học hàng M", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 8, "title": "Bài 8: Hàng や・ゆ・よ (ya-yu-yo)", "duration": "15p", "status": "pending", "link": "#" },
+        { "id": 9, "title": "Bài 9: Hàng ら〜ろ (ra-ro) – Học hàng R", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 10, "title": "Bài 10: Hàng わ・を・ん (wa-wo-n) – Học hàng cuối", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 11, "title": "Bài 11: Ôn tập toàn bộ bảng Hiragana", "duration": "30p", "status": "pending", "link": "#" }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "CHƯƠNG 3 · Bảng chữ cái Katakana cơ bản (ア〜ン)",
+      "completedLessons": 0,
+      "totalLessons": 10,
+      "lessons": [
+        { "id": 12, "title": "Bài 1: Hàng ア〜オ (a-o) – Học hàng A", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 13, "title": "Bài 2: Hàng カ〜コ (ka-ko) – Học hàng K", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 14, "title": "Bài 3: Hàng サ〜ソ (sa-so) – Học hàng S", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 15, "title": "Bài 4: Hàng タ〜ト (ta-to) – Học hàng T", "duration": "30p", "status": "pending", "link": "#" },
+        { "id": 16, "title": "Bài 5: Ôn tập 5 hàng đầu Katakana", "duration": "30p", "status": "pending", "link": "#" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "CHƯƠNG 4 · Tự giới thiệu bản thân bằng tiếng Nhật cực dễ",
+      "completedLessons": 0,
+      "totalLessons": 5,
+      "lessons": [
+        {
+          "id": 401,
+          "title": "Bài 1: Chào hỏi cơ bản",
+          "duration": "35p",
+          "status": "pending",
+          "link": "./lesson.html?lesson=lesson-4"
+        }
+      ]
+    }
+  ]
+}

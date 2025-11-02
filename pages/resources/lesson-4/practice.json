@@ -1,0 +1,111 @@
+﻿{
+  "progressPercent": 12,
+  "navigation": {
+    "previousLessonUrl": "./lesson.html?lesson=lesson-1",
+    "nextLessonUrl": "#"
+  },
+  "sections": [
+    {
+      "title": "Phần A – Quiz (Trắc nghiệm)",
+      "type": "multiple",
+      "questions": [
+        {
+          "questionId": "a1",
+          "prompt": "Câu 1: Câu “はじめまして” được dùng trong tình huống nào?",
+          "choices": [
+            { "label": "a", "value": "a", "text": "Khi tạm biệt" },
+            { "label": "b", "value": "b", "text": "Khi mới gặp ai đó lần đầu" },
+            { "label": "c", "value": "c", "text": "Khi cảm ơn" },
+            { "label": "d", "value": "d", "text": "Khi xin lỗi" }
+          ],
+          "answer": "b"
+        },
+        {
+          "questionId": "a2",
+          "prompt": "Câu 2: Chọn nghĩa đúng của câu “どうぞよろしくおねがいします”",
+          "choices": [
+            { "label": "a", "value": "a", "text": "Xin lỗi" },
+            { "label": "b", "value": "b", "text": "Cảm ơn" },
+            { "label": "c", "value": "c", "text": "Rất mong được giúp đỡ" },
+            { "label": "d", "value": "d", "text": "Tạm biệt" }
+          ],
+          "answer": "c"
+        },
+        {
+          "questionId": "a3",
+          "prompt": "Câu 3: Câu nào có nghĩa “Tôi là người Mỹ”?",
+          "choices": [
+            { "label": "a", "value": "a", "text": "わたしは アメリカじん です" },
+            { "label": "b", "value": "b", "text": "わたしは にほんじん です" },
+            { "label": "c", "value": "c", "text": "あなたは アメリカじん ですか" },
+            { "label": "d", "value": "d", "text": "はじめまして" }
+          ],
+          "answer": "a"
+        }
+      ]
+    },
+    {
+      "title": "Phần B – Nghe và chọn",
+      "type": "listening",
+      "questions": [
+        {
+          "questionId": "b4",
+          "prompt": "Câu 4: Nghe và chọn nghĩa đúng",
+          "audio": "https://drive.google.com/uc?export=download&id=15bTcYW_yonD-Jgfnco5LXRlv60LvmRQz",
+          "choices": [
+            { "label": "a", "value": "a", "text": "Xin chào" },
+            { "label": "b", "value": "b", "text": "Tạm biệt" },
+            { "label": "c", "value": "c", "text": "Cảm ơn" },
+            { "label": "d", "value": "d", "text": "Xin lỗi" }
+          ],
+          "answer": "a"
+        },
+        {
+          "questionId": "b5",
+          "prompt": "Câu 5: Câu hỏi này có nghĩa là gì?",
+          "audio": "https://drive.google.com/uc?export=download&id=11NwUQlbwor5LFPEcaNFfKDC0jLp_U56i",
+          "choices": [
+            { "label": "a", "value": "a", "text": "Anh Miller là người Mỹ à?" },
+            { "label": "b", "value": "b", "text": "Anh Miller làm ở đâu?" },
+            { "label": "c", "value": "c", "text": "Anh Miller bao nhiêu tuổi?" },
+            { "label": "d", "value": "d", "text": "Anh Miller khỏe không?" }
+          ],
+          "answer": "a"
+        },
+        {
+          "questionId": "b6",
+          "prompt": "Câu 6: Nghe và chọn câu kết phù hợp khi giới thiệu bản thân",
+          "audio": "https://drive.google.com/uc?export=download&id=1uB5duIIs1rsdHWsn1BnfuFTqJf2nXZJX",
+          "choices": [
+            { "label": "a", "value": "a", "text": "おつかれさまです" },
+            { "label": "b", "value": "b", "text": "さようなら" },
+            { "label": "c", "value": "c", "text": "どうぞよろしくおねがいします" },
+            { "label": "d", "value": "d", "text": "おめでとうございます" }
+          ],
+          "answer": "c"
+        }
+      ]
+    },
+    {
+      "title": "Phần C – Tự luận",
+      "type": "writing",
+      "questions": [
+        {
+          "questionId": "c7",
+          "prompt": "Câu 7: Hãy viết lại bằng tiếng Nhật: “Tôi là người Nhật.”",
+          "answer": "わたしは にほんじん です。"
+        },
+        {
+          "questionId": "c8",
+          "prompt": "Câu 8: Điền từ thích hợp vào chỗ trống: ミラーさん、あなたは ______ ですか。",
+          "answer": "アメリカじん"
+        },
+        {
+          "questionId": "c9",
+          "prompt": "Câu 9: Dịch câu sau sang tiếng Nhật: “Rất vui được gặp bạn. Rất mong được giúp đỡ.”",
+          "answer": "はじめまして。どうぞよろしくおねがいします。"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+﻿{
+  "unitTitle": "Chương 4 · Tự giới thiệu bản thân bằng tiếng Nhật cực dễ",
+  "title": "Bài 1: Chào hỏi cơ bản",
+  "progress": {
+    "percent": 0.1,
+    "completedLessons": 3,
+    "totalLessons": 20
+  },
+  "navigation": {
+    "previousLessonUrl": "./lesson.html?lesson=lesson-1",
+    "nextLessonUrl": "#"
+  }
+}

@@ -1,0 +1,62 @@
+﻿
+
+{
+  "heading": {
+    "title": "Nội dung lý thuyết",
+    "description": "Học 5 nguyên âm đầu tiên và cách áp dụng nhanh."
+  },
+  "kanaList": [
+    { "character": "あ", "romaji": "A", "description": "Giống âm “a” trong “ba”.", "toneClass": "tone-blue" },
+    { "character": "い", "romaji": "I", "description": "Giống âm “i” trong “đi”.", "toneClass": "tone-green" },
+    { "character": "う", "romaji": "U", "description": "Môi hơi chú lại.", "toneClass": "tone-purple" },
+    { "character": "え", "romaji": "E", "description": "Giống âm “e” trong “xe”.", "toneClass": "tone-orange" },
+    { "character": "お", "romaji": "O", "description": "Giống âm “o” trong “bo”.", "toneClass": "tone-pink" }
+  ],
+  "vocab": [
+    { "word": "あい (ai)", "meaning": "tình yêu" },
+    { "word": "いえ (ie)", "meaning": "nhà" },
+    { "word": "うえ (ue)", "meaning": "trên" },
+    { "word": "えき (eki)", "meaning": "nhà ga" },
+    { "word": "おい (oi)", "meaning": "này! (gọi)" }
+  ],
+  "writing": {
+    "description": "Chọn chữ cái để xem cách viết và luyện phát âm.",
+    "characters": [
+      {
+        "kana": "あ",
+        "romaji": "A",
+        "description": "Giống âm “a” trong “ba”.",
+        "tip": "Bắt đầu từ nét ngang trên cùng, sau đó viết nét dọc và nét cong bên phải.",
+        "gif": "https://jls.vnjpclub.com/kana/anime_h/anime-h-a2.gif"
+      },
+      {
+        "kana": "い",
+        "romaji": "I",
+        "description": "Giống âm “i” trong “đi”.",
+        "tip": "Hai nét đơn giản, giữ đều tay để nét sau cong nhẹ.",
+        "gif": "https://jls.vnjpclub.com/kana/anime_h/anime-h-i2.gif"
+      },
+      {
+        "kana": "う",
+        "romaji": "U",
+        "description": "Môi hơi chú lại khi phát âm.",
+        "tip": "Nét cuối xoáy nhỏ, giữ cổ tay linh hoạt.",
+        "gif": "https://jls.vnjpclub.com/kana/anime_h/anime-h-u2.gif"
+      },
+      {
+        "kana": "え",
+        "romaji": "E",
+        "description": "Giống âm “e” trong “xe”.",
+        "tip": "Viết ba nét đầu ngắn, nét cuối kéo dài sang phải.",
+        "gif": "https://jls.vnjpclub.com/kana/anime_h/anime-h-e2.gif"
+      },
+      {
+        "kana": "お",
+        "romaji": "O",
+        "description": "Giống âm “o” trong “bo”.",
+        "tip": "Gom nét cuối thành vòng tròn bao quanh toàn chữ.",
+        "gif": "https://jls.vnjpclub.com/kana/anime_h/anime-h-o2.gif"
+      }
+    ]
+  }
+}

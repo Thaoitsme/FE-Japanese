@@ -1,0 +1,1619 @@
+<!doctype html>
+<html lang="vi" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống học trực tuyến</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .course-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .chip {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-enrolled { background: #dcfce7; color: #166534; }
+        .status-available { background: #dbeafe; color: #1e40af; }
+        
+        .banner-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .lesson-tab.active {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .lesson-tab-content {
+            display: block;
+        }
+
+        .lesson-tab-content.hidden {
+            display: none;
+        }
+
+        .exercise-option.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .exercise-option.correct {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+
+        .exercise-option.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .sidebar-collapsed {
+            width: 60px !important;
+        }
+
+        .sidebar-collapsed .sidebar-content {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar-collapsed .sidebar-title {
+            display: none;
+        }
+
+        .sidebar-expanded .sidebar-content {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gray-50 font-sans"><!-- TRANG DANH SÁCH KHÓA HỌC -->
+  <div id="coursesListPage" class="page active h-full"><!-- Header -->
+   <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+     <div class="flex items-center justify-between mb-4">
+      <h1 id="platformName" class="text-2xl font-bold text-gray-900">EduVN Learning</h1>
+      <div class="flex items-center gap-4"><span class="text-sm text-gray-600">👋 Xin chào, Học viên!</span>
+      </div>
+     </div><!-- Thanh tìm kiếm -->
+     <div class="relative"><input type="text" id="searchInput" placeholder="Tìm kiếm khóa học..." class="w-full max-w-md px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+      <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+     </div>
+    </div>
+   </header><!-- Nội dung chính -->
+   <main class="max-w-7xl mx-auto px-6 py-8">
+    <div class="mb-6">
+     <h2 class="text-xl font-semibold text-gray-900 mb-2">Khóa học của bạn</h2>
+     <p class="text-gray-600">Tiếp tục hành trình học tập của bạn</p>
+    </div><!-- Danh sách khóa học -->
+    <div id="coursesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Khóa học sẽ được render bằng JavaScript -->
+    </div>
+   </main>
+  </div><!-- TRANG HỌC BÀI -->
+  <div id="lessonPage" class="page h-full flex flex-col"><!-- Header học bài -->
+   <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+    <div class="flex items-center justify-between">
+     <div class="flex items-center gap-4"><button id="backToDetailButton" class="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors">
+       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg><span class="font-medium">Quay lại khóa học</span> </button>
+      <div class="h-6 w-px bg-gray-300"></div>
+      <div class="flex items-center gap-3">
+       <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+        🎌
+       </div>
+       <div>
+        <h1 id="lessonTitle" class="text-lg font-semibold text-gray-900">Bài 1: Làm quen với tiếng Nhật &amp; 5 nguyên âm đầu tiên</h1>
+        <p id="lessonChapter" class="text-sm text-gray-600">Chương 1: Làm quen với tiếng Nhật &amp; phát âm cơ bản</p>
+       </div>
+      </div>
+     </div>
+     <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 text-sm text-gray-600"><span>👋 Học viên</span>
+       <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"><span class="text-blue-600 font-medium text-sm">H</span>
+       </div>
+      </div>
+     </div>
+    </div>
+   </header><!-- Layout chính -->
+   <div class="flex flex-1 overflow-hidden"><!-- Sidebar chương trình học -->
+    <aside id="curriculumSidebar" class="w-80 bg-white border-r border-gray-200 flex flex-col transition-all duration-300"><!-- Nút thu gọn -->
+     <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+      <h3 class="sidebar-title font-semibold text-gray-900">Chương trình học</h3><button id="toggleSidebar" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+       <svg id="sidebarIcon" class="w-5 h-5 text-gray-600 transition-transform duration-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg></button>
+     </div><!-- Nội dung sidebar -->
+     <div class="sidebar-content flex-1 flex flex-col transition-all duration-300"><!-- Tiến độ tổng thể -->
+      <div id="progressSection" class="p-4 border-b border-gray-200">
+       <div class="mb-3">
+        <div class="flex items-center justify-between text-sm text-gray-600 mb-2"><span>Tiến độ khóa học</span> <span id="overallProgress">22%</span>
+        </div>
+        <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+         <div id="overallProgressBar" class="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-300" style="width: 22%"></div>
+        </div>
+       </div>
+       <p class="text-xs text-gray-500">6/27 bài đã hoàn thành</p>
+      </div><!-- Danh sách chương -->
+      <div id="curriculumContent" class="flex-1 overflow-y-auto">
+       <div id="curriculumList" class="p-4 space-y-4"><!-- Sẽ được render bằng JavaScript -->
+       </div>
+      </div>
+     </div>
+    </aside><!-- Khu vực học chính -->
+    <main class="flex-1 flex flex-col overflow-hidden"><!-- Tab navigation -->
+     <div class="bg-white border-b border-gray-200 px-6 py-3">
+      <nav class="flex space-x-6"><button class="lesson-tab active flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 border-blue-500 text-blue-600" data-tab="lesson"> 📚 <span>Bài học &amp; Bài tập</span> </button> <button class="lesson-tab flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="quiz"> 🧩 <span>Quiz</span> </button>
+      </nav>
+     </div><!-- Nội dung tab -->
+     <div class="flex-1 overflow-y-auto bg-gray-50"><!-- Tab Bài học (Lý thuyết + Video + Bài tập) -->
+      <div id="lesson-tab-lesson" class="lesson-tab-content p-6"><!-- Phần 1: Layout 2 cột - Lý thuyết bên trái + Chat AI bên phải -->
+       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"><!-- Cột trái - Nội dung lý thuyết (2/3 cột) -->
+        <div class="lg:col-span-2">
+         <div class="bg-white rounded-lg shadow-sm p-4"><!-- Header lý thuyết -->
+          <div class="mb-4">
+           <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">📚 <span>Nội dung lý thuyết</span></h3>
+           <p class="text-gray-600 text-sm mt-1">Học 5 nguyên âm cơ bản của tiếng Nhật</p>
+          </div><!-- Nội dung lý thuyết -->
+          <div class="space-y-4"><!-- Bảng 5 nguyên âm -->
+           <div>
+            <h4 class="font-medium text-gray-900 mb-2">🎌 Bảng 5 nguyên âm cơ bản</h4>
+            <div class="grid grid-cols-5 gap-2">
+             <div class="text-center p-2 bg-blue-50 rounded border border-blue-200">
+              <div class="text-xl font-bold text-blue-600 cursor-pointer hover:scale-110 transition-transform character-sound mb-1" data-sound="a">
+               あ
+              </div>
+              <div class="text-xs font-medium text-gray-900">
+               A
+              </div><button class="text-blue-600 hover:text-blue-800 text-xs mt-1 sound-btn" data-sound="a" title="Phát âm">🔊</button>
+             </div>
+             <div class="text-center p-2 bg-green-50 rounded border border-green-200">
+              <div class="text-xl font-bold text-green-600 cursor-pointer hover:scale-110 transition-transform character-sound mb-1" data-sound="i">
+               い
+              </div>
+              <div class="text-xs font-medium text-gray-900">
+               I
+              </div><button class="text-green-600 hover:text-green-800 text-xs mt-1 sound-btn" data-sound="i" title="Phát âm">🔊</button>
+             </div>
+             <div class="text-center p-2 bg-purple-50 rounded border border-purple-200">
+              <div class="text-xl font-bold text-purple-600 cursor-pointer hover:scale-110 transition-transform character-sound mb-1" data-sound="u">
+               う
+              </div>
+              <div class="text-xs font-medium text-gray-900">
+               U
+              </div><button class="text-purple-600 hover:text-purple-800 text-xs mt-1 sound-btn" data-sound="u" title="Phát âm">🔊</button>
+             </div>
+             <div class="text-center p-2 bg-orange-50 rounded border border-orange-200">
+              <div class="text-xl font-bold text-orange-600 cursor-pointer hover:scale-110 transition-transform character-sound mb-1" data-sound="e">
+               え
+              </div>
+              <div class="text-xs font-medium text-gray-900">
+               E
+              </div><button class="text-orange-600 hover:text-orange-800 text-xs mt-1 sound-btn" data-sound="e" title="Phát âm">🔊</button>
+             </div>
+             <div class="text-center p-2 bg-red-50 rounded border border-red-200">
+              <div class="text-xl font-bold text-red-600 cursor-pointer hover:scale-110 transition-transform character-sound mb-1" data-sound="o">
+               お
+              </div>
+              <div class="text-xs font-medium text-gray-900">
+               O
+              </div><button class="text-red-600 hover:text-red-800 text-xs mt-1 sound-btn" data-sound="o" title="Phát âm">🔊</button>
+             </div>
+            </div>
+           </div><!-- Luyện tập viết chữ -->
+           <div>
+            <h4 class="font-medium text-gray-900 mb-2">✏️ Luyện tập viết chữ</h4>
+            <div class="flex justify-center gap-2 mb-3"><button class="practice-char-btn w-8 h-8 border-2 border-blue-200 rounded flex items-center justify-center text-sm font-bold text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors" data-char="あ" data-sound="a"> あ </button> <button class="practice-char-btn w-8 h-8 border-2 border-green-200 rounded flex items-center justify-center text-sm font-bold text-green-600 hover:border-green-400 hover:bg-green-50 transition-colors" data-char="い" data-sound="i"> い </button> <button class="practice-char-btn w-8 h-8 border-2 border-purple-200 rounded flex items-center justify-center text-sm font-bold text-purple-600 hover:border-purple-400 hover:bg-purple-50 transition-colors" data-char="う" data-sound="u"> う </button> <button class="practice-char-btn w-8 h-8 border-2 border-orange-200 rounded flex items-center justify-center text-sm font-bold text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-colors" data-char="え" data-sound="e"> え </button> <button class="practice-char-btn w-8 h-8 border-2 border-red-200 rounded flex items-center justify-center text-sm font-bold text-red-600 hover:border-red-400 hover:bg-red-50 transition-colors" data-char="お" data-sound="o"> お </button>
+            </div><!-- Khu vực hiển thị cách viết -->
+            <div id="writingPracticeArea" class="hidden bg-gray-50 rounded p-2 border border-gray-200">
+             <div class="flex items-center justify-center gap-3 mb-2">
+              <div class="text-center">
+               <div class="text-2xl font-bold text-blue-600 mb-1" id="selectedChar">
+                あ
+               </div>
+               <div class="text-xs font-medium text-gray-900" id="selectedPronunciation">
+                A
+               </div><button id="playCharSound" class="mt-1 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors text-xs"> 🔊 Phát âm </button>
+              </div><!-- GIF cách viết -->
+              <div class="w-16 h-16 border-2 border-gray-300 rounded bg-white flex items-center justify-center">
+               <div id="writingGif" class="w-full h-full flex items-center justify-center">
+                <div class="text-gray-400 text-xs text-center">
+                 <div class="text-sm mb-1">
+                  ✏️
+                 </div>
+                 <div class="text-xs">
+                  Cách viết
+                 </div>
+                </div>
+               </div>
+              </div>
+             </div><!-- Mẹo viết -->
+             <div class="bg-yellow-50 border border-yellow-200 rounded p-2">
+              <div class="text-xs text-yellow-800">
+               <div class="font-medium mb-1">
+                💡 Mẹo:
+               </div>
+               <div id="writingTip">
+                Chọn một chữ cái để xem mẹo viết
+               </div>
+              </div>
+             </div>
+            </div>
+           </div><!-- Từ vựng mẫu -->
+           <div>
+            <h4 class="font-medium text-gray-900 mb-2">📝 Từ vựng mẫu</h4>
+            <div class="grid grid-cols-2 gap-1">
+             <div class="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
+              <div class="flex-1"><span class="font-medium text-gray-900 text-xs">あい (ai)</span>
+               <div class="text-xs text-gray-600">
+                tình yêu
+               </div>
+              </div><button class="vocabulary-sound-btn text-blue-600 hover:text-blue-800 px-1 py-1 rounded hover:bg-blue-100 transition-colors text-xs" data-word="ai" title="Phát âm">🔊</button>
+             </div>
+             <div class="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
+              <div class="flex-1"><span class="font-medium text-gray-900 text-xs">いえ (ie)</span>
+               <div class="text-xs text-gray-600">
+                nhà
+               </div>
+              </div><button class="vocabulary-sound-btn text-blue-600 hover:text-blue-800 px-1 py-1 rounded hover:bg-blue-100 transition-colors text-xs" data-word="ie" title="Phát âm">🔊</button>
+             </div>
+             <div class="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
+              <div class="flex-1"><span class="font-medium text-gray-900 text-xs">うえ (ue)</span>
+               <div class="text-xs text-gray-600">
+                trên
+               </div>
+              </div><button class="vocabulary-sound-btn text-blue-600 hover:text-blue-800 px-1 py-1 rounded hover:bg-blue-100 transition-colors text-xs" data-word="ue" title="Phát âm">🔊</button>
+             </div>
+             <div class="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
+              <div class="flex-1"><span class="font-medium text-gray-900 text-xs">おい (oi)</span>
+               <div class="text-xs text-gray-600">
+                này! (gọi)
+               </div>
+              </div><button class="vocabulary-sound-btn text-blue-600 hover:text-blue-800 px-1 py-1 rounded hover:bg-blue-100 transition-colors text-xs" data-word="oi" title="Phát âm">🔊</button>
+             </div>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Cột phải - Chat AI Sensei (1/3 cột) -->
+        <div class="lg:col-span-1">
+         <div class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col sticky top-4" style="height: 700px;"><!-- Header chat -->
+          <div class="p-4 border-b border-gray-200 flex items-center gap-3 flex-shrink-0">
+           <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xl">
+            🤖
+           </div>
+           <div>
+            <h3 class="font-semibold text-gray-900 text-lg">Sensei AI</h3>
+            <p class="text-sm text-gray-500">Trợ lý học tập tiếng Nhật</p>
+           </div>
+          </div><!-- Tin nhắn chat -->
+          <div id="lessonChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+           <div class="flex gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
+             🤖
+            </div>
+            <div class="bg-gray-100 rounded-lg p-4 text-sm leading-relaxed">
+             Xin chào! Tôi là Sensei AI. Bạn có câu hỏi gì về bài học 5 nguyên âm cơ bản không? 😊
+            </div>
+           </div>
+          </div><!-- Input chat -->
+          <div class="p-4 border-t border-gray-200 flex-shrink-0">
+           <div class="flex gap-2"><input type="text" id="lessonChatInput" placeholder="Hỏi về bài học..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"> <button id="sendLessonChat" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"> Gửi </button>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div><!-- Phần 2: Video và Mô tả bài học -->
+       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6"><!-- Video Player (2/3 chiều rộng) -->
+        <div class="lg:col-span-2">
+         <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-gray-200">
+           <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">🎥 <span>Video bài học</span></h3>
+          </div><!-- Video player -->
+          <div class="aspect-video bg-gray-900 flex items-center justify-center relative">
+           <div class="text-center text-white">
+            <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer hover:bg-red-700 transition-colors">
+             <svg class="w-8 h-8 ml-1" fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z" />
+             </svg>
+            </div>
+            <p class="text-lg font-medium">Bài 1: 5 Nguyên âm cơ bản (あ・い・う・え・お)</p>
+            <p class="text-sm text-gray-300 mt-2">Thời lượng: 30 phút</p>
+           </div><!-- Video controls overlay -->
+           <div class="absolute bottom-4 left-4 right-4">
+            <div class="flex items-center gap-4 text-white text-sm"><button class="hover:text-gray-300">⏸️</button>
+             <div class="flex-1 bg-gray-600 h-1 rounded-full">
+              <div class="bg-red-600 h-full w-1/3 rounded-full"></div>
+             </div><span>10:23 / 30:00</span> <button class="hover:text-gray-300">🔊</button> <button class="hover:text-gray-300">⚙️</button> <button class="hover:text-gray-300">⛶</button>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Mô tả bài học (1/3 chiều rộng) -->
+        <div class="lg:col-span-1">
+         <div class="bg-white rounded-lg shadow-sm p-4 h-full">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Mô tả bài học</h3>
+          <div class="text-gray-700 text-sm space-y-3">
+           <p>Trong bài học đầu tiên này, bạn sẽ được làm quen với:</p>
+           <ul class="list-disc list-inside space-y-2 ml-2">
+            <li>Tổng quan về hệ thống chữ viết tiếng Nhật</li>
+            <li>5 nguyên âm cơ bản: あ (a), い (i), う (u), え (e), お (o)</li>
+            <li>Cách phát âm chuẩn từng âm</li>
+            <li>Thứ tự viết nét đúng cách</li>
+            <li>Một số từ vựng đơn giản sử dụng 5 nguyên âm</li>
+           </ul>
+           <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+            <p class="text-blue-800 text-sm">💡 <strong>Mẹo học tập:</strong> Hãy lặp lại phát âm nhiều lần và viết tay để ghi nhớ tốt hơn!</p>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div><!-- Phần 2: Bài tập thực hành ngay sau video -->
+       <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between mb-6">
+         <div>
+          <h3 class="text-xl font-semibold text-gray-900 flex items-center gap-2">✏️ <span>Bài tập thực hành</span></h3>
+          <p class="text-gray-600 text-sm mt-1">Luyện tập ngay sau khi học để củng cố kiến thức</p>
+         </div>
+         <div class="flex items-center gap-4">
+          <div class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+           Câu <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+           </svg><span id="exerciseTimer">00:00</span>
+          </div>
+         </div>
+        </div>
+        <div id="exerciseContent">
+         <div class="mb-6">
+          <p class="text-lg text-gray-800 mb-4">Chọn cách đọc đúng của chữ cái sau:</p>
+          <div class="text-center mb-6">
+           <div class="inline-block text-6xl font-bold text-blue-600 bg-blue-50 rounded-lg p-8">
+            あ
+           </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4"><button class="exercise-option p-4 text-left border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors" data-answer="a"> <span class="font-medium">A. a</span> </button> <button class="exercise-option p-4 text-left border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors" data-answer="i"> <span class="font-medium">B. i</span> </button> <button class="exercise-option p-4 text-left border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors" data-answer="u"> <span class="font-medium">C. u</span> </button> <button class="exercise-option p-4 text-left border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors" data-answer="e"> <span class="font-medium">D. e</span> </button>
+          </div>
+         </div>
+        </div>
+        <div id="exerciseResult" class="hidden mb-6"><!-- Kết quả sẽ hiển thị ở đây -->
+        </div>
+        <div class="flex justify-between mb-6"><button id="prevExercise" class="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50" disabled> ← Câu trước </button> <button id="nextExercise" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"> Câu tiếp → </button>
+        </div><!-- Điều hướng bài học -->
+        <div class="flex items-center justify-between pt-8 mt-8 border-t border-gray-200">
+         <div class="flex items-center gap-4"><button id="markCompleteBtn2" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"> ✓ <span>Đánh dấu hoàn thành</span> </button>
+          <div class="text-sm text-gray-600">
+           Tiến độ khóa học: <span class="font-medium">22%</span>
+          </div>
+         </div>
+         <div class="flex items-center gap-3"><button id="prevLessonBtn2" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors" disabled> ← Bài trước </button> <button id="nextLessonBtn2" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"> Bài tiếp theo → </button>
+         </div>
+        </div>
+       </div>
+      </div><!-- Tab Quiz -->
+      <div id="lesson-tab-quiz" class="lesson-tab-content hidden p-6">
+       <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+         <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">Quiz kiểm tra</h3>
+          <p class="text-gray-600">Kiểm tra kiến thức đã học trong bài này</p>
+         </div>
+         <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+          <div class="flex items-center gap-4">
+           <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl">
+            🧩
+           </div>
+           <div>
+            <h4 class="font-semibold text-blue-900 mb-1">Quiz: 5 Nguyên âm cơ bản</h4>
+            <p class="text-blue-700 text-sm">5 câu hỏi • 5 phút • Điểm tối thiểu: 80%</p>
+           </div>
+          </div>
+         </div>
+         <div class="text-center"><button id="startQuiz" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"> 🚀 Bắt đầu Quiz </button>
+         </div>
+         <div id="quizContent" class="hidden"><!-- Nội dung quiz sẽ được render ở đây -->
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Footer điều hướng -->
+     <footer class="bg-white border-t border-gray-200 px-6 py-4 flex-shrink-0">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-4"><button id="markCompleteBtn" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"> ✓ <span>Đánh dấu hoàn thành</span> </button>
+        <div class="text-sm text-gray-600">
+         Tiến độ khóa học: <span class="font-medium">22%</span>
+        </div>
+       </div>
+       <div class="flex items-center gap-3"><button id="prevLessonBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors" disabled> ← Bài trước </button> <button id="nextLessonBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"> Bài tiếp theo → </button>
+       </div>
+      </div>
+     </footer>
+    </main>
+   </div><!-- Chatbot floating -->
+   <div id="floatingChatbot" class="fixed bottom-6 right-6 z-50"><button id="chatToggle" class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full shadow-lg flex items-center justify-center text-white text-xl hover:scale-105 transition-transform"> 🤖 </button>
+    <div id="chatWindow" class="hidden absolute bottom-16 right-0 w-80 h-96 bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col">
+     <div class="p-3 border-b border-gray-200 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+       <div class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">
+        🤖
+       </div><span class="font-medium text-sm">Sensei AI</span>
+      </div><button id="closeChatWindow" class="text-gray-400 hover:text-gray-600">
+       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div id="floatingChatMessages" class="flex-1 overflow-y-auto p-3 space-y-2">
+      <div class="flex gap-2">
+       <div class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">
+        🤖
+       </div>
+       <div class="bg-gray-100 rounded-lg p-2 text-xs max-w-48">
+        Xin chào! Tôi có thể giúp gì cho bạn về bài học này? 😊
+       </div>
+      </div>
+     </div>
+     <div class="p-3 border-t border-gray-200">
+      <div class="flex gap-2"><input type="text" id="floatingChatInput" placeholder="Hỏi về bài học..." class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"> <button id="sendFloatingChat" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm transition-colors"> Gửi </button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- TRANG CHI TIẾT KHÓA HỌC -->
+  <div id="courseDetailPage" class="page h-full"><!-- Header chi tiết -->
+   <header class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="max-w-4xl mx-auto">
+     <div class="mb-4"><button id="backButton" class="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors">
+       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg><span class="font-medium">Quay lại danh sách khóa học</span> </button>
+     </div>
+     <div class="relative"><input type="text" placeholder="Tìm kiếm khóa học, bài học…" class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+      <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+     </div>
+    </div>
+   </header><!-- Nội dung chi tiết -->
+   <main class="flex-1 overflow-y-auto">
+    <div class="max-w-7xl mx-auto px-6 py-6"><!-- Banner -->
+     <div id="courseBanner" class="banner-gradient h-48 rounded-lg mb-6 flex items-center justify-center text-white text-xl font-semibold"><span id="bannerText">🎌 Khóa học Tiếng Nhật</span>
+     </div><!-- Layout 2 cột -->
+     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><!-- Cột trái - Nội dung chính -->
+      <div class="lg:col-span-2"><!-- Chips -->
+       <div id="courseChips" class="flex flex-wrap gap-2 mb-4"><!-- Chips sẽ được render động -->
+       </div><!-- Tiêu đề và mô tả -->
+       <h1 id="courseDetailTitle" class="text-3xl font-bold text-gray-900 mb-4">Tiếng Nhật vỡ lòng</h1>
+       <p id="courseDetailDescription" class="text-gray-600 text-lg leading-relaxed mb-6">Khóa học nhập môn cho người mới bắt đầu...</p><!-- Meta thông tin -->
+       <div id="courseMeta" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"><!-- Meta sẽ được render động -->
+       </div><!-- Tiến độ và hành động -->
+       <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-8">
+        <div class="flex items-center justify-between">
+         <div class="flex-1">
+          <p id="progressText" class="text-gray-600 mb-2">Tiến độ học tập: 6/10 bài</p>
+          <div class="flex items-center gap-3">
+           <div class="w-64 h-2 progress-bar">
+            <div id="progressFill" class="progress-fill" style="width: 60%"></div>
+           </div><span id="progressPercent" class="text-sm font-medium text-gray-600">60%</span>
+          </div>
+         </div><button id="detailActionButton" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors ml-6"> <span id="detailActionText">Tiếp tục học</span> </button>
+        </div>
+       </div><!-- Thanh tab -->
+       <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="border-b border-gray-200">
+         <nav class="flex"><button class="tab-button active px-6 py-4 text-sm font-medium border-b-2 border-blue-500 text-blue-600 bg-blue-50" data-tab="overview"> Tổng quan </button> <button class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="curriculum"> Chương trình </button> <button class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="reviews"> Đánh giá </button> <button class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="resources"> Tài nguyên </button>
+         </nav>
+        </div><!-- Nội dung tab -->
+        <div class="p-6"><!-- Tab Tổng quan -->
+         <div id="tab-overview" class="tab-content">
+          <div class="space-y-8"><!-- Bạn sẽ học được gì -->
+           <div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Bạn sẽ học được gì</h3>
+            <div id="learningOutcomes" class="grid grid-cols-1 md:grid-cols-2 gap-3"><!-- Sẽ được render động -->
+            </div>
+           </div><!-- Yêu cầu -->
+           <div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Yêu cầu</h3>
+            <div id="requirements" class="space-y-2"><!-- Sẽ được render động -->
+            </div>
+           </div>
+          </div>
+         </div><!-- Tab Chương trình -->
+         <div id="tab-curriculum" class="tab-content hidden">
+          <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+           <div id="curriculumSummary" class="flex flex-wrap gap-6 text-sm text-gray-600"><!-- Sẽ được render động -->
+           </div>
+          </div>
+          <div id="curriculumSections" class="space-y-4"><!-- Sẽ được render động -->
+          </div>
+         </div><!-- Tab Đánh giá -->
+         <div id="tab-reviews" class="tab-content hidden">
+          <div class="text-center py-8 text-gray-500">
+           <p>Tính năng đánh giá đang được phát triển...</p>
+          </div>
+         </div><!-- Tab Tài nguyên -->
+         <div id="tab-resources" class="tab-content hidden">
+          <div class="text-center py-8 text-gray-500">
+           <p>Tài nguyên học tập sẽ được cập nhật sớm...</p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Cột phải - Sidebar -->
+      <div class="space-y-6"><!-- Thẻ Giảng viên -->
+       <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Giảng viên</h3>
+        <div id="instructorInfo" class="space-y-4"><!-- Sẽ được render động -->
+        </div>
+       </div><!-- Thẻ Thông tin khóa học -->
+       <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Thông tin khóa học</h3>
+        <div id="courseInfo" class="space-y-3"><!-- Sẽ được render động -->
+        </div>
+       </div><!-- Thẻ Hành động -->
+       <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Hành động</h3>
+        <div class="space-y-3"><button class="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"> <span class="text-lg">⭳</span> <span class="font-medium">Tải tài liệu</span> </button> <button class="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"> <span class="text-lg">🗨️</span> <span class="font-medium">Thảo luận</span> </button> <button class="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"> <span class="text-lg">🎖</span> <span class="font-medium">Xem chứng chỉ</span> </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div><!-- Modal hiển thị cách viết chữ -->
+  <div id="writingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+   <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+    <div class="flex items-center justify-between mb-4">
+     <h3 class="text-lg font-semibold text-gray-900">Cách viết chữ <span id="modalCharacter" class="text-blue-600"></span></h3><button id="closeModal" class="text-gray-400 hover:text-gray-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg></button>
+    </div>
+    <div class="text-center mb-4">
+     <div class="flex items-center justify-center gap-4"><!-- Ô vuông để hiển thị GIF -->
+      <div class="w-32 h-32 border-2 border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center">
+       <div id="writingGifContainer" class="w-full h-full flex items-center justify-center">
+        <div class="text-gray-400 text-sm text-center">
+         <div class="text-2xl mb-2">
+          ✏️
+         </div>
+         <div>
+          GIF cách viết sẽ hiển thị ở đây
+         </div>
+        </div>
+       </div>
+      </div><!-- Thông tin chữ cái -->
+      <div class="text-left">
+       <div class="text-4xl font-bold text-blue-600 mb-2" id="modalCharacterLarge"></div>
+       <div class="text-lg font-medium text-gray-900 mb-1" id="modalPronunciation"></div>
+       <div class="text-sm text-gray-600 mb-3" id="modalDescription"></div><button id="modalPlaySound" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors"> 🔊 <span>Phát âm</span> </button>
+      </div>
+     </div>
+    </div>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+     <div class="text-sm text-yellow-800">
+      <div class="font-medium mb-1">
+       💡 Mẹo viết:
+      </div>
+      <div id="writingTips">
+       Viết từ trên xuống dưới, từ trái sang phải. Giữ tỷ lệ cân đối trong ô vuông.
+      </div>
+     </div>
+    </div>
+    <div class="flex gap-3"><button id="replayWriting" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"> 🔄 Xem lại cách viết </button> <button id="closeModalBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"> Đóng </button>
+    </div>
+   </div>
+  </div>
+  <script>
+        // Dữ liệu khóa học (mô phỏng courses.json)
+        const coursesData = [
+            {
+                id: 1,
+                title: "Tiếng Nhật vỡ lòng",
+                description: "Khóa học Tiếng Nhật vỡ lòng giúp bạn làm quen với bảng chữ cái Hiragana và Katakana, hiểu âm đục, âm ghép, âm ngắt và âm dài – nền tảng quan trọng nhất để học tiếng Nhật hiệu quả. Sau khóa học, bạn sẽ phát âm chuẩn, viết đúng nét, đọc được từ cơ bản và có thể tự giới thiệu bản thân bằng tiếng Nhật.",
+                instructor: "Sensei Tanaka",
+                instructorAvatar: "👨‍🏫",
+                instructorRating: 4.9,
+                instructorStudents: 20000,
+                instructorBio: "Giảng viên tiếng Nhật với 10 năm kinh nghiệm, từng sống và làm việc tại Tokyo. Chuyên gia về phương pháp giảng dạy tiếng Nhật cho người Việt.",
+                duration: "1-2 ngày",
+                lessons: 27,
+                students: 1560,
+                rating: 4.9,
+                reviews: 538,
+                price: "299,000đ",
+                level: "Sơ Cấp",
+                category: "Mina no Nihongo",
+                enrolled: true,
+                progress: 22,
+                completedLessons: 6,
+                banner: "🎌 Khóa học Tiếng Nhật",
+                bannerColor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                language: "Tiếng Việt",
+                lastUpdated: "Tháng 12, 2024",
+                certificate: "Có chứng chỉ",
+                totalHours: "13.5 giờ",
+                learningOutcomes: [
+                    { skill: "🗣️ Nghe & Phát âm", result: "Phát âm chuẩn 46 âm Hiragana + các âm mở rộng" },
+                    { skill: "✍️ Viết", result: "Viết đúng thứ tự nét, ghi nhớ hình dạng chữ" },
+                    { skill: "📖 Đọc", result: "Nhận diện nhanh chữ cái & từ vựng cơ bản" },
+                    { skill: "💡 Hiểu ngữ âm", result: "Phân biệt âm đục, âm ghép, âm ngắt, âm dài" },
+                    { skill: "💬 Giao tiếp", result: "Giới thiệu bản thân, chào hỏi bằng tiếng Nhật" },
+                    { skill: "🎧 Ứng dụng", result: "Làm bài nghe – nói tương tác qua video & AI" }
+                ],
+                requirements: [
+                    "Máy tính/điện thoại có kết nối internet",
+                    "Không cần kiến thức tiếng Nhật trước đó",
+                    "Tai nghe/loa để nghe phát âm",
+                    "Sẵn sàng dành 30-60 phút/ngày để học"
+                ],
+                curriculum: [
+                    {
+                        title: "CHƯƠNG 1: Làm quen với tiếng Nhật & phát âm cơ bản",
+                        completed: 1,
+                        total: 1,
+                        duration: "30 phút",
+                        lessons: [
+                            { title: "Bài 1: Làm quen với tiếng Nhật & 5 nguyên âm đầu tiên (あ・い・う・え・お)", duration: 30, type: "video", completed: true }
+                        ]
+                    },
+                    {
+                        title: "CHƯƠNG 2: Bảng chữ cái Hiragana cơ bản (あ〜ん)",
+                        completed: 5,
+                        total: 10,
+                        duration: "5 giờ",
+                        lessons: [
+                            { title: "Bài 1: Hàng か～こ (ka–ko) – Học hàng K", duration: 30, type: "video", completed: true },
+                            { title: "Bài 2: Hàng さ～そ (sa–so) – Học hàng S", duration: 30, type: "video", completed: true },
+                            { title: "Bài 3: Hàng た～と (ta–to) – Học hàng T", duration: 30, type: "video", completed: true },
+                            { title: "Bài 4: Hàng な～の (na–no) – Học hàng N", duration: 30, type: "video", completed: true },
+                            { title: "Bài 5: Hàng は～ほ (ha–ho) – Học hàng H", duration: 30, type: "video", completed: true },
+                            { title: "Bài 6: Hàng ま～も (ma–mo) – Học hàng M", duration: 30, type: "video", completed: false },
+                            { title: "Bài 7: Hàng や・ゆ・よ (ya–yu–yo) – Học hàng Y", duration: 30, type: "video", completed: false },
+                            { title: "Bài 8: Hàng ら～ろ (ra–ro) – Học hàng R", duration: 30, type: "video", completed: false },
+                            { title: "Bài 9: Hàng わ・を・ん (wa–wo–n) – Hàng cuối", duration: 30, type: "video", completed: false },
+                            { title: "Bài 10: Ôn tập toàn bộ bảng Hiragana", duration: 30, type: "practice", completed: false }
+                        ]
+                    },
+                    {
+                        title: "CHƯƠNG 3: Bảng chữ cái Katakana cơ bản (ア〜ン)",
+                        completed: 0,
+                        total: 10,
+                        duration: "5 giờ",
+                        lessons: [
+                            { title: "Bài 1: Hàng カ～コ (ka–ko) – Học hàng K", duration: 30, type: "video", completed: false },
+                            { title: "Bài 2: Hàng サ～ソ (sa–so) – Học hàng S", duration: 30, type: "video", completed: false },
+                            { title: "Bài 3: Hàng タ～ト (ta–to) – Học hàng T", duration: 30, type: "video", completed: false },
+                            { title: "Bài 4: Hàng ナ～ノ (na–no) – Học hàng N", duration: 30, type: "video", completed: false },
+                            { title: "Bài 5: Hàng ハ～ホ (ha–ho) – Học hàng H", duration: 30, type: "video", completed: false },
+                            { title: "Bài 6: Hàng マ～モ (ma–mo) – Học hàng M", duration: 30, type: "video", completed: false },
+                            { title: "Bài 7: Hàng ヤ～ヨ (ya–yu–yo) – Học hàng Y", duration: 30, type: "video", completed: false },
+                            { title: "Bài 8: Hàng ラ～ロ (ra–ro) – Học hàng R", duration: 30, type: "video", completed: false },
+                            { title: "Bài 9: Hàng ワ・ヲ・ン (wa–wo–n) – Hàng cuối", duration: 30, type: "video", completed: false },
+                            { title: "Bài 10: Ôn tập toàn bộ bảng Katakana", duration: 30, type: "practice", completed: false }
+                        ]
+                    },
+                    {
+                        title: "CHƯƠNG 4: Âm mở rộng trong tiếng Nhật",
+                        completed: 0,
+                        total: 5,
+                        duration: "2.5 giờ",
+                        lessons: [
+                            { title: "Bài 1: Âm đục & bán đục – が～ぽ", duration: 30, type: "video", completed: false },
+                            { title: "Bài 2: Âm ghép – きゃ・しゃ・ちゃ・にゃ…", duration: 30, type: "video", completed: false },
+                            { title: "Bài 3: Âm ngắt – っ (âm nhỏ)", duration: 30, type: "video", completed: false },
+                            { title: "Bài 4: Âm dài – おう・えい・コーヒー", duration: 30, type: "video", completed: false },
+                            { title: "Bài 5: Ôn tập âm mở rộng", duration: 30, type: "practice", completed: false }
+                        ]
+                    },
+                    {
+                        title: "CHƯƠNG BONUS: Tự giới thiệu bản thân bằng tiếng Nhật cực dễ",
+                        completed: 0,
+                        total: 1,
+                        duration: "30 phút",
+                        lessons: [
+                            { title: "Tự giới thiệu bản thân bằng tiếng Nhật", duration: 30, type: "practice", completed: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Lập trình Python cơ bản",
+                description: "Học Python từ con số 0: Cú pháp cơ bản, biến, hàm, vòng lặp, xử lý dữ liệu. Thực hành với các dự án thực tế và xây dựng ứng dụng đầu tiên.",
+                instructor: "Thầy Minh",
+                instructorAvatar: "👨‍💻",
+                instructorRating: 4.8,
+                instructorStudents: 15000,
+                instructorBio: "Lập trình viên Python với 8 năm kinh nghiệm. Từng làm việc tại các công ty công nghệ lớn và có đam mê chia sẻ kiến thức lập trình.",
+                duration: "3-4 tuần",
+                lessons: 25,
+                students: 2340,
+                rating: 4.8,
+                reviews: 892,
+                price: "599,000đ",
+                level: "Cơ Bản",
+                category: "Lập trình",
+                enrolled: true,
+                progress: 30,
+                completedLessons: 8,
+                banner: "🐍 Lập trình Python",
+                bannerColor: "linear-gradient(135deg, #3776ab 0%, #ffd43b 100%)",
+                language: "Tiếng Việt",
+                lastUpdated: "Tháng 11, 2024",
+                certificate: "Có chứng chỉ",
+                totalHours: "15 giờ",
+                learningOutcomes: [
+                    "Nắm vững cú pháp Python cơ bản",
+                    "Làm việc với biến, hàm và vòng lặp",
+                    "Xử lý dữ liệu với list, dictionary",
+                    "Đọc và ghi file, xử lý lỗi",
+                    "Xây dựng ứng dụng console đầu tiên",
+                    "Hiểu về OOP cơ bản trong Python"
+                ],
+                requirements: [
+                    "Máy tính có thể cài đặt Python",
+                    "Không cần kinh nghiệm lập trình trước đó",
+                    "Sẵn sàng thực hành code mỗi ngày",
+                    "Kiên nhẫn và ham học hỏi"
+                ],
+                curriculum: [
+                    {
+                        title: "Giới thiệu Python",
+                        completed: 3,
+                        total: 3,
+                        duration: "2 giờ",
+                        lessons: [
+                            { title: "Python là gì?", duration: 20, type: "video", completed: true },
+                            { title: "Cài đặt Python và IDE", duration: 30, type: "video", completed: true },
+                            { title: "Chương trình Hello World đầu tiên", duration: 30, type: "practice", completed: true }
+                        ]
+                    },
+                    {
+                        title: "Cú pháp cơ bản",
+                        completed: 5,
+                        total: 8,
+                        duration: "4 giờ",
+                        lessons: [
+                            { title: "Biến và kiểu dữ liệu", duration: 25, type: "video", completed: true },
+                            { title: "Toán tử trong Python", duration: 20, type: "reading", completed: true },
+                            { title: "Chuỗi và xử lý chuỗi", duration: 35, type: "video", completed: true },
+                            { title: "Input và Output", duration: 15, type: "practice", completed: true },
+                            { title: "Bài tập thực hành", duration: 30, type: "practice", completed: true },
+                            { title: "Câu lệnh điều kiện if-else", duration: 25, type: "video", completed: false },
+                            { title: "Vòng lặp for và while", duration: 30, type: "video", completed: false },
+                            { title: "Bài tập vòng lặp", duration: 20, type: "practice", completed: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Thiết kế UI/UX chuyên nghiệp",
+                description: "Khóa học thiết kế giao diện và trải nghiệm người dùng: Figma, Adobe XD, nguyên tắc thiết kế, user research, wireframe, prototype.",
+                instructor: "Cô Linh",
+                duration: "2-3 tuần",
+                lessons: 18,
+                students: 987,
+                rating: 4.9,
+                reviews: 234,
+                price: "799,000đ",
+                level: "Trung Cấp",
+                category: "Thiết kế",
+                enrolled: false,
+                progress: 0,
+                completedLessons: 0,
+                banner: "🎨 Thiết kế UI/UX",
+                bannerColor: "linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%)"
+            },
+            {
+                id: 4,
+                title: "Marketing Digital 2024",
+                description: "Chiến lược marketing online hiệu quả: SEO, SEM, Social Media, Content Marketing, Email Marketing, Analytics và ROI measurement.",
+                instructor: "Thầy Đức",
+                duration: "4-5 tuần",
+                lessons: 32,
+                students: 1876,
+                rating: 4.7,
+                reviews: 445,
+                price: "899,000đ",
+                level: "Nâng Cao",
+                category: "Marketing",
+                enrolled: false,
+                progress: 0,
+                completedLessons: 0,
+                banner: "📈 Marketing Digital",
+                bannerColor: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+            }
+        ];
+
+        // Dữ liệu bài tập
+        const exerciseData = [
+            {
+                question: "Chọn cách đọc đúng của chữ cái sau:",
+                character: "あ",
+                options: ["a", "i", "u", "e"],
+                correct: "a"
+            },
+            {
+                question: "Chọn cách đọc đúng của chữ cái sau:",
+                character: "い",
+                options: ["a", "i", "u", "e"],
+                correct: "i"
+            },
+            {
+                question: "Chọn cách đọc đúng của chữ cái sau:",
+                character: "う",
+                options: ["a", "i", "u", "e"],
+                correct: "u"
+            },
+            {
+                question: "Chọn cách đọc đúng của chữ cái sau:",
+                character: "え",
+                options: ["a", "i", "u", "e"],
+                correct: "e"
+            },
+            {
+                question: "Chọn cách đọc đúng của chữ cái sau:",
+                character: "お",
+                options: ["a", "i", "u", "o"],
+                correct: "o"
+            }
+        ];
+
+        // Cấu hình mặc định
+        const defaultConfig = {
+            platform_name: "EduVN Learning",
+            search_placeholder: "Tìm kiếm khóa học..."
+        };
+
+        // Dữ liệu cách viết chữ cái
+        const writingData = {
+            'あ': {
+                pronunciation: 'A',
+                description: 'Giống âm "a" trong "ba"',
+                tips: 'Bắt đầu từ nét ngang trên cùng, sau đó viết nét dọc và nét cong bên phải.',
+                gifUrl: 'https://jls.vnjpclub.com/kana/anime_h/anime-h-a2.gif'
+            },
+            'い': {
+                pronunciation: 'I', 
+                description: 'Giống âm "i" trong "đi"',
+                tips: 'Viết 2 nét dọc song song, nét phải hơi cong và dài hơn.',
+                gifUrl: 'https://jls.vnjpclub.com/kana/anime_h/anime-h-i2.gif'
+            },
+            'う': {
+                pronunciation: 'U',
+                description: 'Môi hơi chu lại',
+                tips: 'Bắt đầu bằng nét ngang, sau đó viết nét cong như hình chữ U.',
+                gifUrl: 'https://jls.vnjpclub.com/kana/anime_h/anime-h-u2.gif'
+            },
+            'え': {
+                pronunciation: 'E',
+                description: 'Giống âm "e" trong "xe"',
+                tips: 'Viết nét ngang trên, sau đó nét dọc và nét ngang dưới.',
+                gifUrl: 'https://jls.vnjpclub.com/kana/anime_h/anime-h-e2.gif'
+            },
+            'お': {
+                pronunciation: 'O',
+                description: 'Giống âm "o" trong "bo"',
+                tips: 'Kết hợp nhiều nét tạo thành hình phức tạp, chú ý tỷ lệ các phần.',
+                gifUrl: 'https://jls.vnjpclub.com/kana/anime_h/anime-h-o2.gif'
+            }
+        };
+
+        // Biến trạng thái
+        let currentPage = 'list';
+        let currentCourseId = null;
+        let currentExerciseIndex = 0;
+        let exerciseAnswered = false;
+        let exerciseStartTime = null;
+        let exerciseTimer = null;
+
+        // Hàm render giao diện
+        async function render(config) {
+            const platformName = config.platform_name || defaultConfig.platform_name;
+            const searchPlaceholder = config.search_placeholder || defaultConfig.search_placeholder;
+
+            document.getElementById('platformName').textContent = platformName;
+            document.getElementById('searchInput').placeholder = searchPlaceholder;
+
+            renderCoursesList();
+        }
+
+        // Render danh sách khóa học
+        function renderCoursesList() {
+            const container = document.getElementById('coursesList');
+            container.innerHTML = '';
+
+            coursesData.forEach(course => {
+                const courseCard = createCourseCard(course);
+                container.appendChild(courseCard);
+            });
+        }
+
+        // Tạo thẻ khóa học
+        function createCourseCard(course) {
+            const card = document.createElement('div');
+            card.className = 'course-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden';
+            
+            const statusClass = course.enrolled ? 'status-enrolled' : 'status-available';
+            const statusText = course.enrolled ? '✅ Đã đăng ký' : '📝 Có thể đăng ký';
+            const buttonText = course.enrolled ? 'Tiếp tục học' : 'Đăng ký học';
+            const buttonClass = course.enrolled ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700';
+
+            card.innerHTML = `
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="chip ${statusClass}">${statusText}</span>
+                        <span class="text-lg font-bold text-green-600">${course.price}</span>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${course.title}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">${course.description}</p>
+                    
+                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                        <span>👨‍🏫 ${course.instructor}</span>
+                        <span>⏱️ ${course.duration}</span>
+                        <span>📚 ${course.lessons} bài</span>
+                    </div>
+                    
+                    ${course.enrolled ? `
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Tiến độ: ${course.completedLessons}/${course.lessons} bài</span>
+                                <span>${course.progress}%</span>
+                            </div>
+                            <div class="progress-bar h-2">
+                                <div class="progress-fill" style="width: ${course.progress}%"></div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1 text-sm text-gray-500">
+                            <span class="text-yellow-500">⭐</span>
+                            <span>${course.rating} (${course.reviews})</span>
+                        </div>
+                        <button class="course-action-btn ${buttonClass} text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-course-id="${course.id}">
+                            ${buttonText}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Thêm sự kiện click
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('course-action-btn')) {
+                    showCourseDetail(course.id);
+                }
+            });
+
+            // Sự kiện cho nút hành động
+            const actionBtn = card.querySelector('.course-action-btn');
+            actionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!course.enrolled) {
+                    // Đăng ký khóa học
+                    course.enrolled = true;
+                    course.progress = 0;
+                    course.completedLessons = 0;
+                    renderCoursesList();
+                    showNotification('Đăng ký thành công! 🎉');
+                }
+                showCourseDetail(course.id);
+            });
+
+            return card;
+        }
+
+        // Hiển thị chi tiết khóa học
+        function showCourseDetail(courseId) {
+            const course = coursesData.find(c => c.id === courseId);
+            if (!course) return;
+
+            currentCourseId = courseId;
+            
+            // Cập nhật URL (mô phỏng)
+            window.history.pushState({page: 'detail', courseId}, '', `?course=${courseId}`);
+            
+            // Render chi tiết
+            renderCourseDetail(course);
+            
+            // Chuyển trang với hiệu ứng
+            switchPage('detail');
+        }
+
+        // Hiển thị trang học bài
+        function showLessonPage(courseId, chapterId, lessonId) {
+            const course = coursesData.find(c => c.id === courseId);
+            if (!course) return;
+
+            currentCourseId = courseId;
+            
+            // Cập nhật URL (mô phỏng)
+            window.history.pushState({page: 'lesson', courseId, chapterId, lessonId}, '', `?course=${courseId}&lesson=${lessonId}`);
+            
+            // Render trang học bài
+            renderLessonPage(course, chapterId, lessonId);
+            
+            // Chuyển trang với hiệu ứng
+            switchPage('lesson');
+        }
+
+        // Render trang học bài
+        function renderLessonPage(course, chapterId, lessonId) {
+            // Render sidebar curriculum
+            renderCurriculumSidebar(course);
+            
+            // Render exercise
+            renderExercise();
+        }
+
+        // Render sidebar chương trình học
+        function renderCurriculumSidebar(course) {
+            const container = document.getElementById('curriculumList');
+            container.innerHTML = '';
+
+            course.curriculum.forEach((chapter, chapterIndex) => {
+                const chapterDiv = document.createElement('div');
+                chapterDiv.className = 'mb-4';
+                
+                const progressPercent = Math.round((chapter.completed / chapter.total) * 100);
+                
+                chapterDiv.innerHTML = `
+                    <div class="mb-2">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-medium text-gray-900 text-sm">${chapter.title}</h4>
+                            <span class="text-xs text-gray-500">${chapter.completed}/${chapter.total}</span>
+                        </div>
+                        <div class="w-full h-1 bg-gray-200 rounded-full">
+                            <div class="h-full bg-green-500 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        ${chapter.lessons.map((lesson, lessonIndex) => {
+                            const statusIcon = lesson.completed ? '✅' : (lessonIndex === 0 && chapterIndex === 0 ? '🔄' : '⏸');
+                            const statusClass = lesson.completed ? 'text-green-600' : (lessonIndex === 0 && chapterIndex === 0 ? 'text-blue-600' : 'text-gray-400');
+                            
+                            return `
+                                <div class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer text-sm">
+                                    <span class="${statusClass}">${statusIcon}</span>
+                                    <span class="flex-1 ${lesson.completed ? 'text-gray-900' : 'text-gray-600'}">${lesson.title}</span>
+                                    <span class="text-xs text-gray-400">${lesson.duration}p</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(chapterDiv);
+            });
+        }
+
+        // Render bài tập
+        function renderExercise() {
+            const exercise = exerciseData[currentExerciseIndex];
+            const container = document.getElementById('exerciseContent');
+            
+            container.innerHTML = `
+                <div class="mb-6">
+                    <p class="text-lg text-gray-800 mb-4">${exercise.question}</p>
+                    <div class="text-center mb-6">
+                        <div class="inline-block text-6xl font-bold text-blue-600 bg-blue-50 rounded-lg p-8">${exercise.character}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        ${exercise.options.map((option, index) => `
+                            <button class="exercise-option p-4 text-left border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors" data-answer="${option}">
+                                <span class="font-medium">${String.fromCharCode(65 + index)}. ${option}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Cập nhật số câu hỏi
+            document.getElementById('currentQuestion').textContent = currentExerciseIndex + 1;
+            document.getElementById('totalQuestions').textContent = exerciseData.length;
+
+            // Reset trạng thái
+            exerciseAnswered = false;
+            document.getElementById('exerciseResult').classList.add('hidden');
+
+            // Bắt đầu timer
+            startExerciseTimer();
+
+            // Thêm sự kiện cho các tùy chọn
+            document.querySelectorAll('.exercise-option').forEach(option => {
+                option.addEventListener('click', () => handleExerciseAnswer(option));
+            });
+        }
+
+        // Bắt đầu timer bài tập
+        function startExerciseTimer() {
+            exerciseStartTime = Date.now();
+            
+            // Clear timer cũ nếu có
+            if (exerciseTimer) {
+                clearInterval(exerciseTimer);
+            }
+            
+            exerciseTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - exerciseStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerElement = document.getElementById('exerciseTimer');
+                if (timerElement) {
+                    timerElement.textContent = timeString;
+                }
+            }, 1000);
+        }
+
+        // Dừng timer bài tập
+        function stopExerciseTimer() {
+            if (exerciseTimer) {
+                clearInterval(exerciseTimer);
+                exerciseTimer = null;
+            }
+        }
+
+        // Xử lý câu trả lời bài tập
+        function handleExerciseAnswer(selectedOption) {
+            if (exerciseAnswered) return;
+
+            exerciseAnswered = true;
+            const exercise = exerciseData[currentExerciseIndex];
+            const selectedAnswer = selectedOption.dataset.answer;
+            const isCorrect = selectedAnswer === exercise.correct;
+
+            // Đánh dấu tùy chọn được chọn
+            selectedOption.classList.add('selected');
+
+            // Hiển thị đáp án đúng/sai
+            document.querySelectorAll('.exercise-option').forEach(option => {
+                const answer = option.dataset.answer;
+                if (answer === exercise.correct) {
+                    option.classList.add('correct');
+                } else if (answer === selectedAnswer && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+                option.style.pointerEvents = 'none';
+            });
+
+            // Hiển thị kết quả
+            const resultDiv = document.getElementById('exerciseResult');
+            resultDiv.innerHTML = `
+                <div class="p-4 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-lg">${isCorrect ? '✅' : '❌'}</span>
+                        <span class="font-medium ${isCorrect ? 'text-green-800' : 'text-red-800'}">
+                            ${isCorrect ? 'Chính xác!' : 'Chưa đúng'}
+                        </span>
+                    </div>
+                    <p class="text-sm ${isCorrect ? 'text-green-700' : 'text-red-700'}">
+                        ${isCorrect ? 
+                            `Chữ ${exercise.character} đọc là "${exercise.correct}". Bạn đã trả lời đúng!` : 
+                            `Chữ ${exercise.character} đọc là "${exercise.correct}", không phải "${selectedAnswer}".`
+                        }
+                    </p>
+                </div>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Render chi tiết khóa học
+        function renderCourseDetail(course) {
+            // Banner
+            document.getElementById('bannerText').textContent = course.banner;
+            document.getElementById('courseBanner').style.background = course.bannerColor;
+
+            // Chips
+            const chipsContainer = document.getElementById('courseChips');
+            chipsContainer.innerHTML = `
+                <span class="chip">📚 ${course.category}</span>
+                <span class="chip">⭐ ${course.level}</span>
+                <span class="chip ${course.enrolled ? 'status-enrolled' : 'status-available'}">
+                    ${course.enrolled ? '✅ Đã đăng ký' : '📝 Chưa đăng ký'}
+                </span>
+            `;
+
+            // Tiêu đề và mô tả
+            document.getElementById('courseDetailTitle').textContent = course.title;
+            document.getElementById('courseDetailDescription').textContent = course.description;
+
+            // Meta thông tin
+            const metaContainer = document.getElementById('courseMeta');
+            metaContainer.innerHTML = `
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm">${course.duration}</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span class="text-sm">${course.lessons} bài học</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span class="text-sm">${course.students.toLocaleString()} học viên</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <span class="text-sm">${course.rating} (${course.reviews} đánh giá)</span>
+                </div>
+            `;
+
+            // Tiến độ
+            if (course.enrolled) {
+                document.getElementById('progressText').textContent = `Tiến độ học tập: ${course.completedLessons}/${course.lessons} bài`;
+                document.getElementById('progressFill').style.width = `${course.progress}%`;
+                document.getElementById('progressPercent').textContent = `${course.progress}%`;
+                document.getElementById('detailActionText').textContent = 'Tiếp tục học';
+                document.getElementById('detailActionButton').className = 'bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors ml-6';
+            } else {
+                document.getElementById('progressText').textContent = 'Chưa bắt đầu học';
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('progressPercent').textContent = '0%';
+                document.getElementById('detailActionText').textContent = 'Đăng ký học';
+                document.getElementById('detailActionButton').className = 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors ml-6';
+            }
+
+            // Render sidebar
+            renderInstructorInfo(course);
+            renderCourseInfo(course);
+            renderTabContent(course);
+        }
+
+        // Render thông tin giảng viên
+        function renderInstructorInfo(course) {
+            const container = document.getElementById('instructorInfo');
+            container.innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl">
+                        ${course.instructorAvatar}
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-900 mb-1">${course.instructor}</h4>
+                        <div class="flex items-center gap-1 text-sm text-gray-600 mb-2">
+                            <span class="text-yellow-500">⭐</span>
+                            <span>${course.instructorRating} · ${course.instructorStudents.toLocaleString()} học viên</span>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed">${course.instructorBio}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render thông tin khóa học
+        function renderCourseInfo(course) {
+            const container = document.getElementById('courseInfo');
+            const priceDisplay = course.price === "Miễn phí" ? 
+                `<span class="text-green-600 font-semibold">${course.price}</span>` : 
+                `<span class="text-blue-600 font-semibold">${course.price}</span>`;
+            
+            container.innerHTML = `
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Thời lượng:</span>
+                    <span class="font-medium">${course.totalHours}</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Ngôn ngữ:</span>
+                    <span class="font-medium">${course.language}</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Cập nhật:</span>
+                    <span class="font-medium">${course.lastUpdated}</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Chứng chỉ:</span>
+                    <span class="font-medium">${course.certificate}</span>
+                </div>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-600">Giá:</span>
+                    ${priceDisplay}
+                </div>
+            `;
+        }
+
+        // Render nội dung tab
+        function renderTabContent(course) {
+            // Tab Tổng quan
+            renderOverviewTab(course);
+            renderCurriculumTab(course);
+        }
+
+        // Render tab tổng quan
+        function renderOverviewTab(course) {
+            // Learning outcomes
+            const outcomesContainer = document.getElementById('learningOutcomes');
+            outcomesContainer.innerHTML = course.learningOutcomes.map(outcome => `
+                <div class="flex items-start gap-3 p-4 bg-green-50 rounded-lg border-l-4 border-green-400">
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-900 mb-1">${outcome.skill}</div>
+                        <div class="text-sm text-gray-700">${outcome.result}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Requirements
+            const requirementsContainer = document.getElementById('requirements');
+            requirementsContainer.innerHTML = course.requirements.map(req => `
+                <div class="flex items-start gap-3">
+                    <span class="text-blue-600 mt-1">•</span>
+                    <span class="text-sm text-gray-700">${req}</span>
+                </div>
+            `).join('');
+        }
+
+        // Render tab chương trình
+        function renderCurriculumTab(course) {
+            if (!course.curriculum) return;
+
+            // Summary
+            const totalLessons = course.curriculum.reduce((sum, section) => sum + section.total, 0);
+            const completedLessons = course.curriculum.reduce((sum, section) => sum + section.completed, 0);
+            
+            const summaryContainer = document.getElementById('curriculumSummary');
+            summaryContainer.innerHTML = `
+                <span><strong>${totalLessons}</strong> bài học</span>
+                <span><strong>${course.totalHours}</strong></span>
+                <span><strong>${completedLessons}</strong> bài đã hoàn thành</span>
+            `;
+
+            // Sections
+            const sectionsContainer = document.getElementById('curriculumSections');
+            sectionsContainer.innerHTML = course.curriculum.map(section => {
+                const lessonsHtml = section.lessons.map(lesson => {
+                    const icon = lesson.completed ? '✓' : '▷';
+                    const iconClass = lesson.completed ? 'text-green-600' : 'text-gray-400';
+                    
+                    return `
+                        <div class="flex items-center justify-between py-2 px-4 hover:bg-gray-50 rounded-lg cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="${iconClass} font-bold">${icon}</span>
+                                <span class="text-sm ${lesson.completed ? 'text-gray-900' : 'text-gray-600'}">${lesson.title}</span>
+                            </div>
+                            <span class="text-xs text-gray-500">${lesson.duration} phút</span>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="p-4 bg-gray-50 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold text-gray-900">${section.title}</h4>
+                                <div class="flex items-center gap-4 text-sm text-gray-600">
+                                    <span>${section.completed}/${section.total} bài</span>
+                                    <span>${section.duration}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divide-y divide-gray-100">
+                            ${lessonsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Chuyển trang
+        function switchPage(page) {
+            const listPage = document.getElementById('coursesListPage');
+            const detailPage = document.getElementById('courseDetailPage');
+            const lessonPage = document.getElementById('lessonPage');
+
+            // Ẩn tất cả trang
+            [listPage, detailPage, lessonPage].forEach(p => {
+                p.classList.remove('active', 'fade-in');
+            });
+
+            // Hiển thị trang được chọn
+            setTimeout(() => {
+                if (page === 'detail') {
+                    detailPage.classList.add('active', 'fade-in');
+                } else if (page === 'lesson') {
+                    lessonPage.classList.add('active', 'fade-in');
+                } else {
+                    listPage.classList.add('active');
+                }
+            }, 150);
+            
+            currentPage = page;
+        }
+
+        // Hiển thị modal cách viết chữ
+        function showWritingDemo(character, pronunciation) {
+            const modal = document.getElementById('writingModal');
+            const data = writingData[character];
+            
+            if (!data) return;
+            
+            // Cập nhật nội dung modal
+            document.getElementById('modalCharacter').textContent = character;
+            document.getElementById('modalCharacterLarge').textContent = character;
+            document.getElementById('modalPronunciation').textContent = data.pronunciation;
+            document.getElementById('modalDescription').textContent = data.description;
+            document.getElementById('writingTips').textContent = data.tips;
+            
+            // Hiển thị GIF hoặc placeholder
+            const gifContainer = document.getElementById('writingGifContainer');
+            if (data.gifUrl) {
+                gifContainer.innerHTML = `<img src="${data.gifUrl}" alt="Cách viết ${character}" class="w-full h-full object-contain rounded" onerror="this.src=''; this.alt='Không thể tải GIF'; this.style.display='none';">`;
+            } else {
+                gifContainer.innerHTML = `
+                    <div class="text-gray-400 text-sm text-center">
+                        <div class="text-4xl mb-2">${character}</div>
+                        <div class="text-xs">GIF cách viết<br>sẽ hiển thị ở đây</div>
+                    </div>
+                `;
+            }
+            
+            // Hiển thị modal
+            modal.classList.remove('hidden');
+            
+            // Phát âm tự động
+            playPronunciation(pronunciation);
+        }
+
+        // Phát âm (mô phỏng)
+        function playPronunciation(sound) {
+            // Mô phỏng phát âm - trong thực tế sẽ phát file âm thanh
+            showNotification(`🔊 Phát âm: ${sound.toUpperCase()}`);
+        }
+
+        // Phát âm từ vựng (mô phỏng)
+        function playVocabularyPronunciation(word) {
+            // Mô phỏng phát âm từ vựng - trong thực tế sẽ phát file âm thanh
+            const wordMeanings = {
+                'ai': 'あい - tình yêu',
+                'ie': 'いえ - nhà',
+                'ue': 'うえ - trên',
+                'oi': 'おい - này! (gọi)'
+            };
+            const meaning = wordMeanings[word] || word;
+            showNotification(`🔊 Phát âm từ vựng: ${meaning}`);
+        }
+
+        // Đóng modal
+        function closeWritingModal() {
+            document.getElementById('writingModal').classList.add('hidden');
+        }
+
+        // Hiển thị thông báo
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Sự kiện
+        document.getElementById('backButton').addEventListener('click', () => {
+            window.history.pushState({page: 'list'}, '', '?');
+            switchPage('list');
+        });
+
+        document.getElementById('backToDetailButton').addEventListener('click', () => {
+            showCourseDetail(currentCourseId);
+        });
+
+        document.getElementById('detailActionButton').addEventListener('click', () => {
+            const course = coursesData.find(c => c.id === currentCourseId);
+            if (course) {
+                if (!course.enrolled) {
+                    course.enrolled = true;
+                    course.progress = 0;
+                    course.completedLessons = 0;
+                    renderCourseDetail(course);
+                    renderCoursesList();
+                    showNotification('Đăng ký thành công! 🎉');
+                } else {
+                    showLessonPage(course.id, 1, 1); // courseId, chapterId, lessonId
+                }
+            }
+        });
+
+        // Sự kiện bài tập
+        document.getElementById('nextExercise').addEventListener('click', () => {
+            if (currentExerciseIndex < exerciseData.length - 1) {
+                currentExerciseIndex++;
+                renderExercise();
+            } else {
+                showNotification('Bạn đã hoàn thành tất cả bài tập! 🎉');
+            }
+        });
+
+        document.getElementById('prevExercise').addEventListener('click', () => {
+            if (currentExerciseIndex > 0) {
+                currentExerciseIndex--;
+                renderExercise();
+            }
+        });
+
+        // Sự kiện tab học bài
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('lesson-tab') || e.target.closest('.lesson-tab')) {
+                const tab = e.target.classList.contains('lesson-tab') ? e.target : e.target.closest('.lesson-tab');
+                const tabName = tab.getAttribute('data-tab');
+                switchLessonTab(tabName);
+            }
+        });
+
+        function switchLessonTab(tabName) {
+            // Ẩn tất cả tab content
+            document.querySelectorAll('.lesson-tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Hiển thị tab được chọn
+            document.getElementById(`lesson-tab-${tabName}`).classList.remove('hidden');
+            
+            // Cập nhật trạng thái tab
+            document.querySelectorAll('.lesson-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9920eacd855f85b5',t:'MTc2MTA1MTQwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+            }
+        }
