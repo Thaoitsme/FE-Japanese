@@ -4,7 +4,9 @@
 Landing page và hệ thống giao diện cho nền tảng học tiếng Nhật ứng dụng AI. Dự án sử dụng HTML, CSS và JavaScript thuần, kết nối với backend thông qua các API `v1/auth` mà bạn đã cung cấp.
 
 # Tổng quan 
+
 Hiện tại khóa học đang có 2 bài là bài 1 chương 1 (có ảnh gif - bảng chữ cái) và bài 1 chương 4 (không có ảnh gif nhưng có âm thanh - luyện hội thoại)
+
 Hệ thống được chia theo:
     Course (Khóa học) → chứa nhiều Chương (Unit)
         Mỗi Chương (Unit) → chứa nhiều Bài học (Lesson) 
@@ -14,6 +16,7 @@ Hệ thống được chia theo:
             simulation.json – Video dạng url 
             practice.json – Bài tập (Quiz, Nghe hiểu, Tự luận)
             sidebar.json – Điều hướng giữa các chương
+            
     * Cơ bản của pratice chỉ có quiz
     Phần tiến độ, nghe hiểu, tự luận là thuộc phần có thể có hoặc không
 
