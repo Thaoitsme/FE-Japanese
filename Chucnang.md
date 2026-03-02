@@ -1,5 +1,5 @@
 # TÀI LIỆU MÔ TẢ CHI TIẾT CHỨC NĂNG & API (Gia-Su-AI-BE)
-> Người biên soạn: Codex • Phạm vi: FastAPI `/api/v1` • Cập nhật: 02/03/2026
+> Người biên soạn: .... • Phạm vi: FastAPI `/api/v1` • Cập nhật: 02/03/2026
 
 ## MỤC LỤC
 1. Tổng quan & Phân quyền
