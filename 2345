@@ -1,0 +1,1970 @@
+# 📚 API Documentation - Learning Management System (LMS)
+
+**Version:** 1.0.0  
+**Lần cập nhật cuối:** 16/03/2026  
+**Tác giả:** Phạm Lưu Minh Như 
+---
+
+## 1. Tổng Quan Hệ Thống
+
+Hệ thống LMS cung cấp nền tảng quản lý học tập toàn diện với các chức năng chính:
+
+- **Xác thực & Quản lý Tài khoản** - Đăng ký, đăng nhập, quản lý hồ sơ cá nhân
+- **Quản lý Nội dung Học tập** - Khóa học, ngành học, bài học
+- **Quản lý Lớp học** - Tạo lớp, mời học viên, quản lý tiến độ
+- **Ngân hàng Câu hỏi** - Administer quizzes, import/export câu hỏi
+- **Chứng nhận Khóa học** - Cấp chứng chỉ hoàn thành khóa học
+- **AI Service** - Đề xuất học tập thông minh dựa trên hiệu suất
+
+---
+
+## 2. Mục Lục
+
+| Section | Mô tả |
+|---------|-------|
+| [1. Xác thực & Quản lý Tài khoản](#1-xác-thực--quản-lý-tài-khoản) | 17 endpoints |
+| [2. Quản lý Nội dung Học tập](#2-quản-lý-nội-dung-học-tập) | 7 endpoints |
+| [3. Quản lý Khóa học](#3-quản-lý-khóa-học) | 6 endpoints |
+| [4. Quản lý Module & Bài học](#4-quản-lý-module--bài-học) | 9 endpoints |
+| [5. Chứng nhận Khóa học](#5-chứng-nhận-khóa-học) | 7 endpoints |
+| [6. Quản lý Lớp học](#6-quản-lý-lớp-học) | 7 endpoints |
+| [7. Quản lý Ngân hàng Câu hỏi](#7-quản-lý-ngân-hàng-câu-hỏi) | 4 endpoints |
+| [8. AI Service](#8-ai-service) | 3 endpoints |
+| [9. Đánh giá Năng lực & Đề xuất Khóa học](#9-đánh-giá-năng-lực--đề-xuất-khóa-học) | 2 endpoints |
+
+---
+
+## 3. API Endpoint Summary Table
+
+### Tổng Quan Endpoints
+
+| Module | GET | POST | PATCH | PUT | DELETE | Total | Mô tả |
+|--------|-----|------|-------|-----|--------|-------|-------|
+| **1. Xác thực & Quản lý Tài khoản** | 3 | 6 | 3 | 0 | 1 | 13 | Đăng ký, đăng nhập, quản lý hồ sơ |
+| **2. Quản lý Nội dung Học tập** | 5 | 1 | 1 | 0 | 0 | 7 | Khóa học, ngành học, tiến độ |\n| **3. Quản lý Khóa học** | 2 | 2 | 2 | 0 | 0 | 6 | CRUD khóa học |
+| **4. Quản lý Module & Bài học** | 4 | 3 | 0 | 0 | 0 | 7 | Module, quizzes, đề xuất AI |
+| **5. Chứng nhận Khóa học** | 3 | 1 | 0 | 2 | 1 | 7 | Chứng chỉ, templates |
+| **6. Quản lý Lớp học** | 2 | 2 | 0 | 3 | 0 | 7 | Lớp học, Invite Code |
+| **7. Quản lý Ngân hàng Câu hỏi** | 2 | 2 | 0 | 0 | 0 | 4 | Question bank, import/export |
+| **8. AI Service** | 1 | 1 | 0 | 0 | 1 | 3 | Trò chuyện và lịch sử AI |
+| **9. Đánh giá Năng lực** | 1 | 1 | 0 | 0 | 0 | 2 | Assessment & placement test |
+| **TỔNG CỘNG** | **23** | **19** | **6** | **5** | **3** | **56** | **Tất cả endpoints** |
+
+---
+
+### Chi Tiết Endpoints Theo Module
+
+#### 1. Xác thực & Quản lý Tài khoản (13 endpoints)
+
+| # | HTTP | Endpoint | Mô tả | Quyền |
+|---|------|----------|-------|-------|
+| 1.1 | POST | `/api/v1/auth/register` | Đăng ký tài khoản mới | Public |
+| 1.2 | POST | `/api/v1/auth/login` | Đăng nhập hệ thống | Public |
+| 1.3 | POST | `/api/v1/auth/logout` | Đăng xuất tài khoản | User |
+| 1.4 | GET | `/api/v1/users/me` | Xem hồ sơ cá nhân | User |
+| 1.5 | PATCH | `/api/v1/users/me` | Cập nhật hồ sơ cá nhân | User |
+| 1.6 | POST | `/api/v1/auth/send-otp` | Gửi OTP xác thực email | Public |
+| 1.7 | POST | `/api/v1/auth/verify-otp` | Xác thực OTP email | Public |
+| 1.8 | POST | `/api/v1/auth/reset-password` | Reset mật khẩu bằng OTP | Public |
+| 1.9 | DELETE | `/api/v1/users/me` | Yêu cầu xoá tài khoản | User |
+| 1.10 | PATCH | `/api/v1/users/me/cancel-delete` | Hủy yêu cầu xoá tài khoản | User |
+| 1.11 | GET | `/api/v1/users/security-logs` | Xem lịch sử bảo mật | User |
+| 1.12 | PATCH | `/api/v1/admin/users/{user_id}` | Admin chỉnh sửa thông tin người dùng | Admin |
+| 1.13 | GET | `/api/v1/admin/dashboard` | Xem thống kê tổng quan hệ thống | Admin |
+
+---
+
+#### 2. Quản lý Nội dung Học tập (7 endpoints)
+
+| # | HTTP | Endpoint | Mô tả | Quyền |
+|---|------|----------|-------|-------|
+| 2.1 | GET | `/api/v1/learning/dashboard` | Truy cập Dashboard học tập | Student |
+| 2.7 | GET | `/api/v1/courses` | Tìm kiếm và xem danh sách khóa học | Public |
+| 2.2 | GET | `/api/v1/majors` | Xem danh sách ngành học | Public |
+| 2.3 | POST | `/api/v1/admin/majors` | Thêm ngành học mới | Admin |
+| 2.4 | PATCH | `/api/v1/admin/majors/{major_id}` | Chỉnh sửa thông tin ngành học | Admin |
+| 2.5 | PATCH | `/api/v1/admin/majors/{major_id}/lock` | Khóa ngành học | Admin |
+| 2.6 | GET | `/api/v1/learning/progress/{course_id}` | Xem tiến độ học tập cá nhân | Student |\n| 2.7 | GET | `/api/v1/courses` | Tìm kiếm và xem danh sách khóa học | Public |\n\n---\n\n#### 3. Quản lý Khóa học (6 endpoints)
+
+| # | HTTP | Endpoint | Mô tả | Quyền |
+|---|------|----------|-------|-------|
+| 3.1 | GET | `/api/v1/courses` | Xem danh sách khóa học (Public) | Public |
+| 3.2 | POST | `/api/v1/courses/{course_id}/enroll` | Đăng ký khóa học | Student |
+| 3.3 | GET | `/api/v1/admin/courses` | Xem danh sách khóa học (Admin) | Admin |
+| 3.4 | POST | `/api/v1/admin/courses` | Thêm khóa học mới | Admin |
+| 3.5 | PATCH | `/api/v1/admin/courses/{course_id}` | Chỉnh sửa thông tin khóa học | Admin |
+| 3.6 | PATCH | `/api/v1/admin/courses/{course_id}/lock` | Khóa khóa học | Admin |
+
+[... resto del archivo sin cambios ...]
+
+#### 7. Quản lý Ngân hàng Câu hỏi (4 endpoints)
+
+| # | HTTP | Endpoint | Mô tả | Quyền |
+|---|------|----------|-------|-------|
+| 7.1 | POST | `/api/v1/admin/question-bank` | Thêm câu hỏi vào ngân hàng | Admin |
+| 7.2 | GET | `/api/v1/admin/question-bank/export` | Export ngân hàng câu hỏi | Admin |
+| 7.3 | POST | `/api/v1/admin/question-bank/import` | Import câu hỏi hàng loạt | Admin |
+| 7.4 | GET | `/api/v1/admin/question-bank` | Lấy danh sách câu hỏi theo Bloom Level | Admin |
+
+---
+
+### Tóm Tắt Quyền Hạn
+
+| Quyền | Tổng Endpoints | Mô tả |
+|-------|----------------|-------|
+| **Public** | 4 | Không cần xác thực (đăng ký, đăng nhập, xem khóa học, xem ngành học) |
+| **Student** | 15 | Học viên (đăng ký, làm bài, xem tiến độ, tham gia lớp) |
+| **Instructor** | 12 | Giảng viên (tạo lớp, xem kết quả, xem chứng chỉ) |
+| **Admin** | 27 | Quản trị viên (CRUD toàn bộ dữ liệu) |
+| **User (Any)** | 5 | Bất kỳ người dùng đã đăng nhập (xem hồ sơ, cập nhật, đăng xuất) |
+
+---
+
+### Tóm Tắt HTTP Methods
+
+| Method | Tổng | Mô tả |
+|--------|------|-------|
+| **GET** | 22 | Lấy dữ liệu |
+| **POST** | 19 | Tạo dữ liệu mới |
+| **PATCH** | 6 | Cập nhật một phần |
+| **PUT** | 5 | Cập nhật toàn bộ / Thay thế |
+| **DELETE** | 3 | Xoá dữ liệu |
+| **TOTAL** | **55** | Tất cả endpoints |
+
+---
+
+## 4. Hướng dẫn chung
+
+### Quyền Hạn (Roles)
+- **Public**: Không cần xác thực
+- **Student**: Học viên
+- **Instructor**: Giảng viên
+- **Admin**: Quản trị viên
+
+### Định Dạng Response
+Tất cả responses trả về JSON format:
+
+```json
+{
+  "data": {},
+  "message": "Success message",
+  "status": 200
+}
+```
+
+### Error Handling
+```json
+{
+  "detail": "Error description",
+  "status": 400,
+  "error_code": "INVALID_REQUEST"
+}
+```
+
+---
+
+## 1. Xác thực & Quản lý Tài khoản
+
+### 1.1 Đăng ký tài khoản mới
+
+**Endpoint:** `POST /api/v1/auth/register`
+
+**Quyền:** Public (không cần token)
+
+**Mô tả:**  
+Tạo tài khoản mới với email, mật khẩu và tên đầy đủ. Vai trò mặc định là student.
+
+**Yêu cầu:**
+- `full_name`: Tối thiểu 2 từ, tối đa 100 ký tự
+- `email`: Định dạng email hợp lệ, unique trong hệ thống
+- `password`: Tối thiểu 8 ký tự, chứa chữ hoa, chữ thường, số và ký tự đặc biệt
+
+**Request Schema:**
+```json
+{
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "password": "SecurePass123!@"
+}
+```
+
+**Response Schema (201 Created):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "role": "student",
+  "status": "active",
+  "created_at": "2026-03-13T10:30:00Z",
+  "message": "Đăng ký tài khoản thành công"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "detail": "Email đã tồn tại | Invalid email format | Mật khẩu không đủ mạnh"
+}
+```
+
+---
+
+### 1.2 Đăng nhập hệ thống
+
+**Endpoint:** `POST /api/v1/auth/login`
+
+**Quyền:** Public
+
+**Mô tả:**  
+Xác thực người dùng bằng email và password. Hệ thống cấp Access Token (JWT) và Refresh Token.
+
+**Tính năng:**
+- Access Token: Thời hạn 15 phút
+- Refresh Token: Thời hạn 7 ngày (nếu "Remember Me" bật) hoặc 1 ngày
+- Hỗ trợ "Remember Me" để gia hạn thời gian đăng nhập
+
+**Request Schema:**
+```json
+{
+  "email": "john@example.com",
+  "password": "SecurePass123!@",
+  "remember_me": true
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "full_name": "John Doe",
+    "email": "john@example.com",
+    "role": "student",
+    "avatar": null
+  }
+}
+```
+
+**Error Response (401 Unauthorized):**
+```json
+{
+  "detail": "Email hoặc mật khẩu không hợp lệ | Tài khoản đã bị khóa"
+}
+```
+
+---
+
+### 1.3 Đăng xuất tài khoản
+
+**Endpoint:** `POST /api/v1/auth/logout`
+
+**Quyền:** Student, Instructor, Admin
+
+**Mô tả:**  
+Vô hiệu hóa access token hiện tại và hủy tất cả refresh tokens liên quan.
+
+**Request Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "message": "Đăng xuất thành công"
+}
+```
+
+---
+
+### 1.4 Xem hồ sơ cá nhân
+
+**Endpoint:** `GET /api/v1/users/me`
+
+**Quyền:** Student, Instructor, Admin
+
+**Mô tả:**  
+Trả về thông tin chi tiết của người dùng hiện tại.
+
+**Response Schema (200 OK):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "role": "student",
+  "avatar_url": null,
+  "bio": "I love learning",
+  "learning_preferences": ["Programming", "Mathematics"],
+  "contact_info": "+84901234567",
+  "created_at": "2026-01-15T08:00:00Z",
+  "updated_at": "2026-03-13T10:00:00Z"
+}
+```
+
+---
+
+### 1.5 Cập nhật hồ sơ cá nhân
+
+**Endpoint:** `PATCH /api/v1/users/me`
+
+**Quyền:** Student, Instructor, Admin
+
+**Mô tả:**  
+Cho phép người dùng chỉnh sửa thông tin cá nhân. Tất cả trường đều optional.
+
+**Request Schema:**
+```json
+{
+  "full_name": "John Doe Updated",
+  "avatar_url": "https://example.com/avatar.jpg",
+  "bio": "Updated bio",
+  "contact_info": "+84901234567",
+  "learning_preferences": ["Programming", "AI"]
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "full_name": "John Doe Updated",
+  "email": "john@example.com",
+  "role": "student",
+  "avatar_url": "https://example.com/avatar.jpg",
+  "bio": "Updated bio",
+  "learning_preferences": ["Programming", "AI"],
+  "contact_info": "+84901234567",
+  "updated_at": "2026-03-13T10:30:00Z",
+  "message": "Cập nhật hồ sơ thành công"
+}
+```
+
+---
+
+### 1.6 Gửi OTP xác thực email
+
+**Endpoint:** `POST /api/v1/auth/send-otp`
+
+**Quyền:** Public
+
+**Mô tả:**  
+Gửi mã OTP (6 chữ số) tới email để xác thực tài khoản. OTP có thời hạn 15 phút, giới hạn 5 lần gửi/ngày.
+
+**Request Schema:**
+```json
+{
+  "email": "john@example.com"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "email": "john@example.com",
+  "otp_expires_in": 15,
+  "message": "OTP đã được gửi tới email"
+}
+```
+
+**Error Response (429 Too Many Requests):**
+```json
+{
+  "detail": "Đã vượt quá số lần gửi OTP trong ngày. Vui lòng thử lại vào ngày mai"
+}
+```
+
+---
+
+### 1.7 Xác thực OTP email
+
+**Endpoint:** `POST /api/v1/auth/verify-otp`
+
+**Quyền:** Public
+
+**Mô tả:**  
+Xác thực mã OTP. Giới hạn 5 lần nhập sai, sau đó khóa 30 phút.
+
+**Request Schema:**
+```json
+{
+  "email": "john@example.com",
+  "otp": "123456"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "email": "john@example.com",
+  "verified": true,
+  "message": "Xác thực OTP thành công"
+}
+```
+
+**Error Response (429 Too Many Requests):**
+```json
+{
+  "detail": "Nhập OTP sai quá nhiều lần. Vui lòng thử lại sau 30 phút"
+}
+```
+
+---
+
+### 1.8 Reset mật khẩu bằng OTP
+
+**Endpoint:** `POST /api/v1/auth/reset-password`
+
+**Quyền:** Public
+
+**Mô tả:**  
+Đặt lại mật khẩu bằng OTP đã xác thực.
+
+**Request Schema:**
+```json
+{
+  "email": "john@example.com",
+  "otp": "123456",
+  "new_password": "NewSecurePass456!@"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "email": "john@example.com",
+  "message": "Đặt lại mật khẩu thành công"
+}
+```
+
+---
+
+### 1.9 Yêu cầu xoá tài khoản
+
+**Endpoint:** `DELETE /api/v1/users/me`
+
+**Quyền:** Student, Instructor, Admin
+
+**Mô tả:**  
+Gửi yêu cầu xoá tài khoản. Người dùng cần xác nhận bằng mật khẩu hiện tại. Tài khoản sẽ được đánh dấu cho xóa và sẽ tự động xóa hoàn toàn sau **7 ngày**. Trong thời gian này, người dùng có thể hủy yêu cầu xóa.
+
+**Request Schema:**
+```json
+{
+  "password": "SecurePass123!@"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "pending_deletion",
+  "deletion_scheduled_at": "2026-03-20T11:00:00Z",
+  "days_until_deletion": 7,
+  "message": "Yêu cầu xóa tài khoản đã được gửi. Tài khoản sẽ bị xóa sau 7 ngày"
+}
+```
+
+---
+
+### 1.10 Hủy yêu cầu xóa tài khoản
+
+**Endpoint:** `PATCH /api/v1/users/me/cancel-delete`
+
+**Quyền:** Student, Instructor, Admin (hủy tài khoản của chính mình) / Admin (hủy tài khoản người dùng khác)
+
+**Mô tả:**  
+Hủy yêu cầu xóa tài khoản trước khi thời hạn 7 ngày kết thúc. Tài khoản sẽ quay lại trạng thái `active`. Ngoài ra, Admin có thể xóa tài khoản ngay lập tức mà không cần chờ 7 ngày.
+
+**Request Schema (Hủy yêu cầu xóa):**
+```json
+{
+  "action": "cancel"
+}
+```
+
+**Request Schema (Admin xóa ngay):**
+```json
+{
+  "action": "force_delete",
+  "admin_note": "Xóa tài khoản vì vi phạm điều khoản sử dụng"
+}
+```
+
+**Response Schema (200 OK - Hủy thành công):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "active",
+  "cancelled_at": "2026-03-15T11:00:00Z",
+  "message": "Yêu cầu xóa tài khoản đã được hủy thành công"
+}
+```
+
+**Response Schema (200 OK - Xóa ngay):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "deleted",
+  "deleted_at": "2026-03-15T11:00:00Z",
+  "deleted_by": "admin-uuid",
+  "deletion_reason": "force_delete",
+  "message": "Tài khoản đã được xóa ngay lập tức bởi admin"
+}
+```
+
+---
+
+### 1.11 Xem lịch sử bảo mật tài khoản
+
+**Endpoint:** `GET /api/v1/users/security-logs`
+
+**Quyền:** Student, Instructor, Admin
+
+**Mô tả:**  
+Xem lịch sử hoạt động bảo mật của tài khoản (đăng nhập, đăng xuất, đổi mật khẩu).
+
+**Query Parameters:**
+| Parameter | Type | Default | Mô tả |
+|-----------|------|---------|--------|
+| page | integer | 1 | Trang dữ liệu |
+| limit | integer | 20 | Số bản ghi mỗi trang |
+
+**Response Schema (200 OK):**
+```json
+{
+  "total": 45,
+  "page": 1,
+  "limit": 20,
+  "logs": [
+    {
+      "log_id": "log-uuid",
+      "action": "LOGIN",
+      "ip_address": "192.168.1.1",
+      "status": "SUCCESS",
+      "created_at": "2026-03-13T10:30:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 1.12 Admin chỉnh sửa thông tin người dùng
+
+**Endpoint:** `PATCH /api/v1/admin/users/{user_id}`
+
+**Quyền:** Admin
+
+**Mô tả:**  
+Cho phép Admin chỉnh sửa thông tin hồ sơ của bất kỳ người dùng nào.
+
+**Request Schema:**
+```json
+{
+  "full_name": "Jane Doe",
+  "email": "jane@example.com",
+  "role": "instructor",
+  "status": "active",
+  "avatar_url": "https://example.com/avatar.jpg",
+  "bio": "Updated bio",
+  "contact_info": "+84987654321"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "id": "user-uuid",
+  "full_name": "Jane Doe",
+  "email": "jane@example.com",
+  "role": "instructor",
+  "status": "active",
+  "updated_at": "2026-03-13T11:30:00Z",
+  "updated_by": "admin-uuid",
+  "message": "Cập nhật thông tin người dùng thành công"
+}
+```
+
+---
+
+### 1.13 Xem thống kê tổng quan hệ thống (Admin Dashboard)
+
+**Endpoint:** `GET /api/v1/admin/dashboard`
+
+**Quyền:** Admin
+
+**Mô tả:**  
+Xem các chỉ số thống kê tổng quan của hệ thống LMS.
+
+**Response Schema (200 OK):**
+```json
+{
+  "total_students": 1250,
+  "total_instructors": 45,
+  "total_courses": 120,
+  "total_enrollments": 3500,
+  "course_completion_rate": 68.5,
+  "quiz_pass_rate": 75.2,
+  "active_users_today": 450,
+  "new_users_this_month": 180
+}
+```
+
+---
+
+## 2. Quản lý Nội dung Học tập
+
+### 2.1 Truy cập Dashboard học tập
+
+**Endpoint:** `GET /api/v1/learning/dashboard`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Xem danh sách tất cả khóa học mà học viên đã đăng ký cùng tiến độ học tập.
+
+**Response Schema (200 OK):**
+```json
+{
+  "user_id": "user-uuid",
+  "courses": [
+    {
+      "course_id": "course-uuid",
+      "course_title": "Python Fundamentals",
+      "instructor_name": "Dr. Smith",
+      "progress_percent": 65,
+      "total_lessons": 24,
+      "completed_lessons": 16,
+      "last_accessed_lesson": {
+        "lesson_id": "lesson-uuid",
+        "lesson_title": "Functions and Scope"
+      }
+    }
+  ]
+}
+```
+
+---
+
+### 2.2 Xem danh sách ngành học
+
+**Endpoint:** `GET /api/v1/majors`
+
+**Quyền:** Public
+
+**Mô tả:**  
+Xem danh sách tất cả các ngành học có trong hệ thống.
+
+**Query Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| keyword | string | Tìm kiếm theo tên |
+| status | string | Lọc: active, locked |
+| page | integer | Trang dữ liệu |
+| limit | integer | Số bản ghi/trang |
+
+**Response Schema (200 OK):**
+```json
+{
+  "total": 15,
+  "page": 1,
+  "limit": 10,
+  "majors": [
+    {
+      "id": "major-uuid",
+      "name": "Công nghệ Thông tin",
+      "description": "Ngành học về lập trình và phát triển phần mềm",
+      "status": "active",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 2.3 Thêm ngành học mới (Admin)
+
+**Endpoint:** `POST /api/v1/admin/majors`
+
+**Quyền:** Admin
+
+**Mô tả:**  
+Tạo ngành học mới để phân loại các khóa học.
+
+**Request Schema:**
+```json
+{
+  "name": "Công nghệ Thông tin",
+  "description": "Ngành học về lập trình và phát triển phần mềm"
+}
+```
+
+**Response Schema (201 Created):**
+```json
+{
+  "id": "major-uuid",
+  "name": "Công nghệ Thông tin",
+  "description": "Ngành học về lập trình và phát triển phần mềm",
+  "status": "active",
+  "created_at": "2026-03-13T10:00:00Z",
+  "message": "Tạo ngành học thành công"
+}
+```
+
+---
+
+### 2.4 Chỉnh sửa thông tin ngành học
+
+**Endpoint:** `PATCH /api/v1/admin/majors/{major_id}`
+
+**Quyền:** Admin
+
+**Request Schema:**
+```json
+{
+  "name": "Công nghệ Thông tin (cập nhật)",
+  "description": "Mô tả cập nhật"
+}
+```
+
+---
+
+### 2.5 Khóa ngành học
+
+**Endpoint:** `PATCH /api/v1/admin/majors/{major_id}/lock`
+
+**Quyền:** Admin
+
+**Response Schema (200 OK):**
+```json
+{
+  "major_id": "major-uuid",
+  "status": "locked",
+  "updated_at": "2026-03-13T11:00:00Z",
+  "message": "Ngành học đã được khóa"
+}
+```
+
+---
+
+### 2.6 Xem tiến độ học tập cá nhân\n\n**Endpoint:** `GET /api/v1/learning/progress/{course_id}`\n\n**Quyền:** Student\n\n**Mô tả:**  \nXem tiến độ học tập chi tiết của một khóa học.\n\n**Response Schema (200 OK):**\n```json\n{\n  \"course_id\": \"course-uuid\",\n  \"course_title\": \"Python Fundamentals\",\n  \"total_lessons\": 24,\n  \"completed_lessons\": 16,\n  \"progress_percent\": 66.7,\n  \"lessons\": [\n    {\n      \"lesson_id\": \"lesson-uuid\",\n      \"lesson_title\": \"Introduction to Python\",\n      \"lesson_type\": \"video\",\n      \"status\": \"completed\"\n    },\n    {\n      \"lesson_id\": \"lesson-uuid-2\",\n      \"lesson_title\": \"Module 1 Quiz\",\n      \"lesson_type\": \"quiz\",\n      \"status\": \"completed\",\n      \"quiz_result\": {\n        \"highest_score\": 85,\n        \"max_attempts\": 3,\n        \"attempts_used\": 2,\n        \"attempts_remaining\": 1\n      }\n    }\n  ]\n}\n```\n\n---\n\n### 2.7 Tìm kiếm và xem danh sách khóa học\n\n**Endpoint:** GET /api/v1/courses\n**Quyền:** Public (không cần đăng nhập)\n**Router:** courses_router.py\n**Controller:** handle_get_courses\n**Mô tả:**\nCho phép người dùng (bao gồm cả khách chưa đăng nhập) tìm kiếm và xem danh sách tất cả các khóa học có trong hệ thống trước khi quyết định đăng ký học.\nNgười dùng có thể:\n- tìm kiếm khóa học theo tên khóa học\n- lọc theo danh mục (category)\n- sắp xếp theo mới nhất hoặc phổ biến nhất\nThông tin hiển thị giúp học viên so sánh và lựa chọn khóa học phù hợp trước khi đăng ký.\n\n**Response Schema (200 OK)** \n```json\n{\n \"total\": \"integer (tổng số khóa học)\",\n \"page\": \"integer\",\n \"limit\": \"integer\",\n \"courses\": [\n   {\n     \"id\": \"string (UUID khóa học)\",\n     \"title\": \"string (tên khóa học)\",\n     \"description\": \"string (mô tả ngắn)\",\n     \"thumbnail_url\": \"string (ảnh đại diện khóa học)\",\n     \"category\": \"string\",\n     \n     \"total_lessons\": \"integer\",\n     \"total_students\": \"integer\",\n     \"rating\": \"number (0-5)\",\n     \"created_at\": \"datetime\"\n   }\n ]\n}\n```\n**Error Response (400 Bad Request)**\n```json\n{\n \"detail\": \"string (Invalid query parameters)\"\n}\n```\n\n---
+```json
+{
+  "course_id": "course-uuid",
+  "course_title": "Python Fundamentals",
+  "total_lessons": 24,
+  "completed_lessons": 16,
+  "progress_percent": 66.7,
+  "lessons": [
+    {
+      "lesson_id": "lesson-uuid",
+      "lesson_title": "Introduction to Python",
+      "lesson_type": "video",
+      "status": "completed"
+    },
+    {
+      "lesson_id": "lesson-uuid-2",
+      "lesson_title": "Module 1 Quiz",
+      "lesson_type": "quiz",
+      "status": "completed",
+      "quiz_result": {
+        "highest_score": 85,
+        "max_attempts": 3,
+        "attempts_used": 2,
+        "attempts_remaining": 1
+      }
+    }
+  ]
+}
+```
+
+---
+
+## 3. Quản lý Khóa học
+
+### 3.1 Xem danh sách khóa học (Public)
+
+**Endpoint:** `GET /api/v1/courses`
+
+**Quyền:** Public
+
+**Mô tả:**  
+Xem danh sách tất cả khóa học có sẵn để đăng ký.
+
+**Query Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| keyword | string | Tìm kiếm theo tên |
+| category | string | Lọc theo danh mục |
+| instructor_id | string | Lọc theo giảng viên |
+| sort | string | Sắp xếp: newest, popular |
+| page | integer | Trang dữ liệu |
+| limit | integer | Số bản ghi/trang |
+
+**Response Schema (200 OK):**
+```json
+{
+  "total": 120,
+  "page": 1,
+  "limit": 10,
+  "courses": [
+    {
+      "id": "course-uuid",
+      "title": "Python Fundamentals",
+      "description": "Learn Python basics for beginners",
+      "thumbnail_url": "https://example.com/thumb.jpg",
+      "category": "Programming",
+      "instructor": {
+        "id": "instructor-uuid",
+        "name": "Dr. Smith"
+      },
+      "total_lessons": 24,
+      "total_students": 450,
+      "rating": 4.8,
+      "created_at": "2026-01-15T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 3.2 Đăng ký khóa học
+
+**Endpoint:** `POST /api/v1/courses/{course_id}/enroll`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Đăng ký tham gia một khóa học. Học viên không thể hủy đăng ký sau khi đã đăng ký.
+
+**Response Schema (200 OK):**
+```json
+{
+  "enrollment_id": "enrollment-uuid",
+  "user_id": "user-uuid",
+  "course_id": "course-uuid",
+  "enrolled_at": "2026-03-13T10:30:00Z",
+  "message": "Đăng ký khóa học thành công"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "detail": "Bạn đã đăng ký khóa học này rồi"
+}
+```
+
+---
+
+### 3.3 Xem danh sách khóa học (Admin)
+
+**Endpoint:** `GET /api/v1/admin/courses`
+
+**Quyền:** Admin
+
+**Response Schema (200 OK):**
+```json
+{
+  "total": 120,
+  "page": 1,
+  "limit": 10,
+  "courses": [
+    {
+      "course_id": "course-uuid",
+      "title": "Python Fundamentals",
+      "major_name": "Công nghệ Thông tin",
+      "description": "Learn Python basics",
+      "total_lessons": 24,
+      "status": "active",
+      "created_at": "2026-01-15T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 3.4 Thêm khóa học mới (Admin)
+
+**Endpoint:** `POST /api/v1/admin/courses`
+
+**Quyền:** Admin
+
+**Request Schema:**
+```json
+{
+  "title": "Python Fundamentals",
+  "description": "Learn Python basics for beginners",
+  "major_id": "major-uuid",
+  "total_lessons": 24
+}
+```
+
+**Response Schema (201 Created):**
+```json
+{
+  "course_id": "course-uuid",
+  "title": "Python Fundamentals",
+  "description": "Learn Python basics for beginners",
+  "major_id": "major-uuid",
+  "status": "active",
+  "created_at": "2026-03-13T10:00:00Z",
+  "message": "Tạo khóa học thành công"
+}
+```
+
+---
+
+### 3.5 Chỉnh sửa thông tin khóa học
+
+**Endpoint:** `PATCH /api/v1/admin/courses/{course_id}`
+
+**Quyền:** Admin
+
+**Request Schema:**
+```json
+{
+  "title": "Python for Beginners",
+  "description": "Updated description",
+  "major_id": "major-uuid",
+  "total_lessons": 25
+}
+```
+
+---
+
+### 3.6 Khóa khóa học
+
+**Endpoint:** `PATCH /api/v1/admin/courses/{course_id}/lock`
+
+**Quyền:** Admin
+
+**Response Schema (200 OK):**
+```json
+{
+  "course_id": "course-uuid",
+  "status": "locked",
+  "updated_at": "2026-03-13T11:00:00Z",
+  "message": "Khóa khóa học thành công"
+}
+```
+
+---
+
+## 4. Quản lý Module & Bài học
+
+### 4.1 Xem danh sách Module của khóa học (Student)
+
+**Endpoint:** `GET /api/v1/learning/courses/{course_id}/modules`
+
+**Quyền:** Student (phải đã đăng ký khóa học)
+
+**Mô tả:**  
+Xem danh sách Module và Lesson của khóa học mà học viên đã đăng ký.
+
+**Response Schema (200 OK):**
+```json
+{
+  "course_id": "course-uuid",
+  "course_title": "Python Fundamentals",
+  "modules": [
+    {
+      "module_id": "module-uuid",
+      "module_title": "Module 1: Getting Started",
+      "module_order": 1,
+      "lessons": [
+        {
+          "lesson_id": "lesson-uuid",
+          "lesson_title": "Introduction",
+          "lesson_type": "video",
+          "lesson_order": 1,
+          "status": "completed"
+        },
+        {
+          "lesson_id": "lesson-uuid-2",
+          "lesson_title": "Module Quiz",
+          "lesson_type": "quiz",
+          "lesson_order": 2,
+          "status": "in_progress"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### 4.2 Xem danh sách Module của khóa học (Instructor)
+
+**Endpoint:** `GET /api/v1/instructor/courses/{course_id}/modules`
+
+**Quyền:** Instructor
+
+**Mô tả:**  
+Giảng viên xem cấu trúc nội dung của khóa học mà mình đã mở lớp.
+
+**Response Schema:** Tương tự như 4.1
+
+---
+
+### 4.3 Làm bài kiểm tra
+
+**Endpoint:** `POST /api/v1/learning/quizzes/{quiz_id}/attempt`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Làm bài kiểm tra từ ngân hàng câu hỏi.
+
+**Hỗ trợ các loại câu hỏi:**
+- Multiple Choice (trắc nghiệm)
+- True/False (đúng/sai)
+- Fill in the Blank (điền từ)
+- Drag and Drop (kéo thả)
+
+**Request Schema:**
+```json
+{
+  "answers": [
+    {
+      "question_id": "q-uuid",
+      "selected_answer": "option_a"
+    }
+  ]
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "quiz_id": "quiz-uuid",
+  "attempt_id": "attempt-uuid",
+  "score": 85,
+  "highest_score": 85,
+  "passed": true,
+  "status": "completed",
+  "attempts_used": 1,
+  "attempts_remaining": 2
+}
+```
+
+---
+
+### 4.4 Làm lại bài kiểm tra (Retake)
+
+**Endpoint:** `POST /api/v1/learning/quizzes/{quiz_id}/retake`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Làm lại bài kiểm tra nếu chưa đạt. Giới hạn 3 lần/24 giờ.
+
+**Điều kiện:**
+- Điểm < 70%
+- Số lần làm < 3 lần/24 giờ
+
+**Response Schema (200 OK):**
+```json
+{
+  "quiz_id": "quiz-uuid",
+  "attempt_id": "attempt-uuid",
+  "message": "Retake started",
+  "attempts_used": 2,
+  "attempts_remaining": 1,
+  "next_reset_time": "2026-03-14T10:30:00Z"
+}
+```
+
+---
+
+### 4.5 Xem lại bài kiểm tra
+
+**Endpoint:** `GET /api/v1/learning/quizzes/{attempt_id}/review`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Xem chi tiết các câu hỏi sai và đáp án đúng.
+
+**Response Schema (200 OK):**
+```json
+{
+  "attempt_id": "attempt-uuid",
+  "quiz_id": "quiz-uuid",
+  "score": 70,
+  "wrong_questions": [
+    {
+      "question_id": "q-uuid",
+      "question_text": "What is Python?",
+      "your_answer": "A programming language",
+      "correct_answer": "An interpreted programming language",
+      "module": "Module 1: Basics"
+    }
+  ]
+}
+```
+
+---
+
+### 4.6 Nhận đề xuất học tập từ AI
+
+**Endpoint:** `GET /api/v1/learning/quizzes/{attempt_id}/ai-recommendation`
+
+**Quyền:** Student
+
+**Mô tả:**  
+AI phân tích kết quả bài kiểm tra và đề xuất học tập.
+
+**Response Schema (200 OK):**
+```json
+{
+  "attempt_id": "attempt-uuid",
+  "recommendations": [
+    "Học lại phần lý thuyết Module 2 – Python Loops",
+    "Làm lại bài kiểm tra tập trung vào chủ đề Conditional Statements"
+  ],
+  "weak_topics": ["Loops", "Conditionals"]
+}
+```
+
+---
+
+### 4.7 Lấy danh sách câu hỏi của bài kiểm tra
+
+**Endpoint:** `GET /api/v1/learning/quizzes/{quiz_id}/questions`
+
+**Quyền:** Student
+
+**Response Schema (200 OK):**
+```json
+{
+  "quiz_id": "quiz-uuid",
+  "questions": [
+    {
+      "question_id": "q-uuid",
+      "question_text": "What is Python?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "option_id": "opt-1",
+          "option_text": "A programming language"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### 4.8 Xem kết quả bài kiểm tra học viên (Instructor)
+
+**Endpoint:** `GET /api/v1/instructor/quizzes/{quiz_id}/results`
+
+**Quyền:** Instructor
+
+**Mô tả:**  
+Giáo viên xem kết quả làm bài kiểm tra của các học viên.
+
+**Response Schema (200 OK):**
+```json
+{
+  "quiz_id": "quiz-uuid",
+  "quiz_title": "Module 1 Quiz",
+  "students": [
+    {
+      "student_id": "user-uuid",
+      "student_name": "John Doe",
+      "highest_score": 85,
+      "latest_score": 85,
+      "status": "completed",
+      "attempts_used": 2
+    }
+  ]
+}
+```
+
+---
+
+## 5. Chứng nhận Khóa học
+
+### 5.1 Nhận chứng nhận hoàn thành khóa học
+
+**Endpoint:** `GET /api/v1/learning/courses/{course_id}/certificate`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Nhận chứng nhận hoàn thành khóa học khi đáp ứng đủ điều kiện.
+
+**Điều kiện cấp chứng nhận:**
+- ✅ Hoàn thành 100% bài kiểm tra cuối chương (Module Quiz)
+- ✅ Đạt ≥ 70% ở mỗi bài kiểm tra
+
+**Response Schema (200 OK):**
+```json
+{
+  "certificate_id": "cert-uuid",
+  "student_id": "user-uuid",
+  "student_name": "John Doe",
+  "course_id": "course-uuid",
+  "course_title": "Python Fundamentals",
+  "issued_at": "2026-03-13T10:30:00Z",
+  "certificate_url": "https://example.com/certs/cert-uuid.pdf"
+}
+```
+
+---
+
+### 5.2 Xem thống kê chứng nhận khóa học (Instructor)
+
+**Endpoint:** `GET /api/v1/instructor/courses/{course_id}/certificate-stats`
+
+**Quyền:** Instructor
+
+**Response Schema (200 OK):**
+```json
+{
+  "course_id": "course-uuid",
+  "course_title": "Python Fundamentals",
+  "total_students": 120,
+  "completed_students": 85,
+  "completion_rate": 70.8,
+  "not_completed_students": 35
+}
+```
+
+---
+
+### 5.3 Xem trạng thái chứng nhận học viên (Instructor)
+
+**Endpoint:** `GET /api/v1/instructor/courses/{course_id}/certificates`
+
+**Quyền:** Instructor
+
+**Response Schema (200 OK):**
+```json
+{
+  "course_id": "course-uuid",
+  "students": [
+    {
+      "student_id": "user-uuid",
+      "student_name": "John Doe",
+      "status": "completed",
+      "issued_at": "2026-03-13T10:30:00Z",
+      "certificate_preview_url": "https://example.com/preview.pdf"
+    }
+  ]
+}
+```
+
+---
+
+### 5.4 Thêm Template chứng nhận
+
+**Endpoint:** `POST /api/v1/admin/certificate-templates`
+
+**Quyền:** Admin
+
+**Request Schema:**
+```json
+{
+  "template_name": "Standard Certificate",
+  "background_url": "https://example.com/bg.jpg",
+  "logo_url": "https://example.com/logo.png",
+  "student_name_position": {
+    "x": 400,
+    "y": 300
+  },
+  "date_position": {
+    "x": 450,
+    "y": 420
+  }
+}
+```
+
+**Response Schema (201 Created):**
+```json
+{
+  "template_id": "template-uuid",
+  "template_name": "Standard Certificate",
+  "created_at": "2026-03-13T10:00:00Z"
+}
+```
+
+---
+
+### 5.5 Cập nhật Template chứng nhận
+
+**Endpoint:** `PUT /api/v1/admin/certificate-templates/{template_id}`
+
+**Quyền:** Admin
+
+---
+
+### 5.6 Xóa Template chứng nhận
+
+**Endpoint:** `DELETE /api/v1/admin/certificate-templates/{template_id}`
+
+**Quyền:** Admin
+
+---
+
+### 5.7 Xem lịch sử cấp chứng nhận
+
+**Endpoint:** `GET /api/v1/admin/certificates/history`
+
+**Quyền:** Admin
+
+**Response Schema (200 OK):**
+```json
+{
+  "certificates": [
+    {
+      "certificate_id": "cert-uuid",
+      "student_name": "John Doe",
+      "course_title": "Python Fundamentals",
+      "issued_at": "2026-03-13T10:30:00Z",
+      "template_name": "Standard Certificate"
+    }
+  ]
+}
+```
+
+---
+
+## 6. Quản lý Lớp học
+
+### 6.1 Tham gia lớp học bằng Invite Code
+
+**Endpoint:** `POST /api/v1/learning/classes/join`
+
+**Quyền:** Student
+
+**Mô tả:**  
+Học viên tham gia lớp học bằng mã Invite Code do giáo viên cung cấp.
+
+**Request Schema:**
+```json
+{
+  "invite_code": "PYTHON101ABC"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "class_id": "class-uuid",
+  "class_name": "Python 101 - Morning Class",
+  "course_id": "course-uuid",
+  "course_title": "Python Fundamentals",
+  "message": "Tham gia lớp học thành công"
+}
+```
+
+---
+
+### 6.2 Tạo lớp học (Instructor)
+
+**Endpoint:** `POST /api/v1/instructor/classes`
+
+**Quyền:** Instructor
+
+**Request Schema:**
+```json
+{
+  "class_name": "Python 101 - Morning Class",
+  "course_id": "course-uuid"
+}
+```
+
+**Response Schema (201 Created):**
+```json
+{
+  "class_id": "class-uuid",
+  "class_name": "Python 101 - Morning Class",
+  "course_id": "course-uuid",
+  "invite_code": "PYTHON101ABC",
+  "created_at": "2026-03-13T10:00:00Z"
+}
+```
+
+---
+
+### 6.3 Xem danh sách học sinh trong lớp
+
+**Endpoint:** `GET /api/v1/instructor/classes/{class_id}/students`
+
+**Quyền:** Instructor
+
+**Response Schema (200 OK):**
+```json
+{
+  "class_id": "class-uuid",
+  "class_name": "Python 101 - Morning Class",
+  "students": [
+    {
+      "student_id": "user-uuid",
+      "student_name": "John Doe",
+      "email": "john@example.com",
+      "joined_at": "2026-03-13T10:30:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 6.4 Gán khóa học cho lớp
+
+**Endpoint:** `PUT /api/v1/instructor/classes/{class_id}/course`
+
+**Quyền:** Instructor
+
+**Request Schema:**
+```json
+{
+  "course_id": "course-uuid"
+}
+```
+
+---
+
+### 6.5 Cập nhật Invite Code
+
+**Endpoint:** `PUT /api/v1/instructor/classes/{class_id}/invite-code`
+
+**Quyền:** Instructor
+
+**Request Schema:**
+```json
+{
+  "regenerate": true
+}
+```
+
+---
+
+### 6.6 Khóa lớp học
+
+**Endpoint:** `PUT /api/v1/instructor/classes/{class_id}/lock`
+
+**Quyền:** Instructor
+
+**Request Schema:**
+```json
+{
+  "is_locked": true
+}
+```
+
+---
+
+### 6.7 Quản lý lớp học (Admin)
+
+**Endpoint:** `GET /api/v1/admin/classes`
+
+**Quyền:** Admin
+
+**Response Schema (200 OK):**
+```json
+{
+  "classes": [
+    {
+      "class_id": "class-uuid",
+      "class_name": "Python 101 - Morning Class",
+      "course_title": "Python Fundamentals",
+      "instructor_name": "Dr. Smith",
+      "total_students": 35,
+      "created_at": "2026-03-13T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## 7. Quản lý Ngân hàng Câu hỏi
+
+### 7.1 Thêm câu hỏi vào ngân hàng
+
+**Endpoint:** `POST /api/v1/admin/question-bank`
+
+**Quyền:** Admin
+
+**Mô tả:**  
+Thêm câu hỏi mới vào ngân hàng câu hỏi với phân loại theo Bloom Taxonomy.
+
+**Bloom Levels:**
+| Level | Ý nghĩa | Ví dụ |
+|-------|---------|-------|
+| remember | Nhận biết | Định nghĩa, liệt kê |
+| understand | Thông hiểu | Giải thích, mô tả |
+| apply | Vận dụng | Giải quyết vấn đề |
+| analyze | Vận dụng cao | Phân tích, so sánh |
+
+**Request Schema:**
+```json
+{
+  "question_text": "What is Python?",
+  "question_type": "multiple_choice",
+  "lesson_id": "lesson-uuid",
+  "module_id": "module-uuid",
+  "bloom_level": "remember",
+  "media_url": "https://example.com/image.jpg",
+  "media_type": "image",
+  "explanation": "Python is an interpreted programming language",
+  "options": [
+    {
+      "option_text": "A programming language",
+      "is_correct": true
+    }
+  ]
+}
+```
+
+**Response Schema (201 Created):**
+```json
+{
+  "question_id": "q-uuid",
+  "message": "Thêm câu hỏi thành công"
+}
+```
+
+---
+
+### 7.2 Export ngân hàng câu hỏi
+
+**Endpoint:** `GET /api/v1/admin/question-bank/export`
+
+**Quyền:** Admin
+
+**Query Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| format | string | xlsx hoặc csv |
+
+**Response Schema (200 OK):**
+```json
+{
+  "file_url": "https://example.com/exports/questions.xlsx",
+  "file_type": "xlsx"
+}
+```
+
+---
+
+### 7.3 Import câu hỏi hàng loạt
+
+**Endpoint:** `POST /api/v1/admin/question-bank/import`
+
+**Quyền:** Admin
+
+**Mô tả:**  
+Tải lên hàng loạt câu hỏi từ file Excel/CSV.
+
+**Required Columns:**
+| Column | Mô tả |
+|--------|-------|
+| question_text | Nội dung câu hỏi |
+| question_type | multiple_choice, true_false, fill_blank, drag_drop |
+| bloom_level | remember, understand, apply, analyze |
+| option_1 - option_4 | Các lựa chọn |
+| correct_answer | Đáp án đúng |
+| explanation | Giải thích |
+
+**Request Schema:**
+```json
+{
+  "file_url": "https://example.com/imports/questions.xlsx"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "total_questions": 120,
+  "success_imported": 118,
+  "failed": 2
+}
+```
+
+---
+
+### 7.4 Lấy danh sách câu hỏi theo Bloom Level
+
+**Endpoint:** `GET /api/v1/admin/question-bank`
+
+**Quyền:** Admin
+
+**Query Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| bloom_level | string | remember, understand, apply, analyze |
+| lesson_id | string | Lọc theo bài học |
+| module_id | string | Lọc theo module |
+| question_type | string | Loại câu hỏi |
+| page | integer | Trang dữ liệu |
+| limit | integer | Số bản ghi/trang |
+
+**Response Schema (200 OK):**
+```json
+{
+  "questions": [
+    {
+      "question_id": "q-uuid",
+      "question_text": "What is Python?",
+      "bloom_level": "remember",
+      "media_url": "https://example.com/image.jpg",
+      "question_type": "multiple_choice"
+    }
+  ]
+}
+```
+
+---
+
+## 8. AI Service
+
+Cung cấp các dịch vụ AI để hỗ trợ học tập, gồm trò chuyện AI trực tiếp và quản lý lịch sử cuộc trò chuyện.
+
+### 8.1 POST /api/v1/learning/ai-chat
+**Mô tả:** Gửi tin nhắn tới AI và nhận phản hồi liên quan tới nội dung học tập
+
+**Quyền:** Student, Instructor, Admin
+
+**Request Schema:**
+```json
+{
+  "message": "Giải thích chi tiết về khái niệm Machine Learning",
+  "course_id": "course-uuid-123",
+  "module_id": "module-uuid-456",
+  "lesson_id": "lesson-uuid-789",
+  "question_id": "question-uuid-optional"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "data": {
+    "chat_id": "chat-uuid-001",
+    "message": "Giải thích chi tiết về khái niệm Machine Learning",
+    "response": "Machine Learning là một nhánh của Artificial Intelligence...",
+    "context": {
+      "course_id": "course-uuid-123",
+      "module_id": "module-uuid-456",
+      "lesson_id": "lesson-uuid-789"
+    },
+    "timestamp": "2026-03-13T10:30:00Z",
+    "tokens_used": 150
+  },
+  "message": "Success",
+  "timestamp": "2026-03-13T10:30:01Z"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Tin nhắn trống hoặc không hợp lệ
+- `401 Unauthorized` - Không được xác thực
+- `429 Too Many Requests` - Vượt quá giới hạn 100 requests/phút
+- `500 Internal Server Error` - Lỗi hệ thống AI
+
+---
+
+### 8.2 GET /api/v1/learning/ai-chat/history
+**Mô tả:** Lấy lịch sử các cuộc trò chuyện trước đó với AI
+
+**Quyền:** Student, Instructor, Admin
+
+**Query Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| course_id | string | Lọc theo khóa học (optional) |
+| lesson_id | string | Lọc theo bài học (optional) |
+| page | integer | Số trang (default: 1) |
+| limit | integer | Bản ghi mỗi trang (default: 20) |
+
+**Response Schema (200 OK):**
+```json
+{
+  "data": {
+    "chats": [
+      {
+        "chat_id": "chat-uuid-001",
+        "user_message": "Giải thích Machine Learning",
+        "ai_response": "Machine Learning là...",
+        "course_id": "course-uuid-123",
+        "lesson_id": "lesson-uuid-789",
+        "created_at": "2026-03-13T10:30:00Z"
+      },
+      {
+        "chat_id": "chat-uuid-002",
+        "user_message": "Các ứng dụng của AI?",
+        "ai_response": "AI được ứng dụng trong...",
+        "course_id": "course-uuid-123",
+        "lesson_id": "lesson-uuid-789",
+        "created_at": "2026-03-12T14:20:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 45,
+      "has_next": true,
+      "has_prev": false
+    }
+  },
+  "message": "Success",
+  "timestamp": "2026-03-13T10:31:00Z"
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized` - Không được xác thực
+- `404 Not Found` - Không tìm thấy lịch sử
+
+---
+
+### 8.3 DELETE /api/v1/learning/ai-chat/history
+**Mô tả:** Xóa toàn bộ lịch sử cuộc trò chuyện
+
+**Quyền:** Student, Instructor, Admin
+
+**Request Schema:** (Empty body)
+
+**Response Schema (200 OK):**
+```json
+{
+  "data": {
+    "deleted_count": 45,
+    "message": "Lịch sử trò chuyện đã được xóa thành công"
+  },
+  "message": "Success",
+  "timestamp": "2026-03-13T10:32:00Z"
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized` - Không được xác thực
+- `500 Internal Server Error` - Lỗi khi xóa
+
+---
+
+## 9. Đánh giá Năng lực & Đề xuất Khóa học
+
+Quản lý các bài kiểm tra đầu vào (placement test) để đánh giá năng lực học viên và đề xuất khóa học phù hợp.
+
+### 9.1 POST /api/v1/assessment/placement-tests/{attempt_id}/submit
+**Mô tả:** Nộp bài kiểm tra đầu vào (placement test) với bảo vệ theo giới hạn thời gian
+
+**Quyền:** Student
+
+**Path Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| attempt_id | string | ID của lần làm bài |
+
+**Request Schema:**
+```json
+{
+  "answers": [
+    {
+      "question_id": "q-uuid-001",
+      "answer": "Python"
+    },
+    {
+      "question_id": "q-uuid-002",
+      "answer": ["Option A", "Option C"]
+    },
+    {
+      "question_id": "q-uuid-003",
+      "answer": "True"
+    }
+  ],
+  "submitted_at": "2026-03-13T10:45:00Z"
+}
+```
+
+**Response Schema (200 OK):**
+```json
+{
+  "data": {
+    "attempt_id": "attempt-uuid-001",
+    "score": 75,
+    "total_questions": 20,
+    "correct_answers": 15,
+    "recommended_level": "Intermediate",
+    "completion_timestamp": "2026-03-13T10:45:30Z",
+    "status": "submitted",
+    "time_taken_seconds": 1200,
+    "assessment_id": "assessment-uuid-001"
+  },
+  "message": "Bài kiểm tra đã nộp thành công",
+  "timestamp": "2026-03-13T10:45:31Z"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Dữ liệu không hợp lệ hoặc thiếu câu trả lời
+- `401 Unauthorized` - Không được xác thực
+- `403 Forbidden` - Không có quyền nộp bài này
+- `404 Not Found` - Không tìm thấy attempt
+- `409 Conflict` - Bài đã được nộp trước đó
+- `500 Internal Server Error` - Lỗi hệ thống
+
+**Ghi chú:**
+- Hệ thống tự động nộp (auto-submit) nếu:
+  - Hết giới hạn thời gian của bài
+  - Người dùng chuyển tab (page blur)
+  - Trình duyệt đóng mà chưa nộp
+- Thời gian được tính chính xác từ lúc bắt đầu bài
+- Điểm được tính dựa trên số câu đúng / tổng số câu × 100
+
+---
+
+### 9.2 GET /api/v1/assessment/placement-tests/{attempt_id}/status
+**Mô tả:** Lấy trạng thái hiện tại và thời gian còn lại của bài kiểm tra
+
+**Quyền:** Student, Instructor, Admin
+
+**Path Parameters:**
+| Parameter | Type | Mô tả |
+|-----------|------|-------|
+| attempt_id | string | ID của lần làm bài |
+
+**Response Schema (200 OK):**
+```json
+{
+  "data": {
+    "attempt_id": "attempt-uuid-001",
+    "status": "in_progress",
+    "time_remaining_seconds": 300,
+    "total_time_seconds": 1800,
+    "time_elapsed_seconds": 1500,
+    "progress": {
+      "answered": 15,
+      "total": 20,
+      "percentage": 75
+    },
+    "started_at": "2026-03-13T10:15:00Z",
+    "expires_at": "2026-03-13T10:45:00Z",
+    "auto_submit_enabled": true,
+    "warnings": []
+  },
+  "message": "Success",
+  "timestamp": "2026-03-13T10:30:00Z"
+}
+```
+
+**Alternative Response for Submitted Test (200 OK):**
+```json
+{
+  "data": {
+    "attempt_id": "attempt-uuid-001",
+    "status": "submitted",
+    "score": 85,
+    "submission_timestamp": "2026-03-13T10:45:25Z",
+    "recommended_level": "Advanced",
+    "time_taken_seconds": 1425,
+    "assessment_id": "assessment-uuid-001"
+  },
+  "message": "Success",
+  "timestamp": "2026-03-13T10:45:26Z"
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized` - Không được xác thực
+- `403 Forbidden` - Không có quyền xem trạng thái
+- `404 Not Found` - Không tìm thấy attempt
+- `500 Internal Server Error` - Lỗi hệ thống
+
+**Ghi chú:**
+- `time_remaining_seconds` được cập nhật real-time
+- Nếu `time_remaining_seconds ≤ 0`, bài sẽ tự động nộp (auto-submit)
+- Trạng thái có thể là: in_progress, submitted, expired, cancelled
+- Cảnh báo sẽ hiển thị nếu thời gian còn lại < 5 phút
+
+
+
+---
+
+## 10. System Architecture
+
+Để xem kiến trúc hệ thống chi tiết bao gồm danh sách Controllers, Services và các methods tương ứng, vui lòng xem [ARCHITECTURE.md](ARCHITECTURE.md).
+
+File này chứa:
+- 📋 **Controllers Mapping** - Bảng chi tiết 13 controllers và chức năng
+- 🔧 **Services Mapping** - Bảng chi tiết 13 services và xử lý
+- 📝 **Chi tiết Methods của Controllers** - Mô tả từng method
+- 🛠️ **Chi tiết Methods của Services** - Mô tả từng method service
+
+**Xem chi tiết tại:** [ARCHITECTURE.md](ARCHITECTURE.md)
+
+---
+
+## 📋 HTTP Status Codes
+
+| Code | Meaning |
+|------|---------|
+| 200 | OK - Yêu cầu thành công |
+| 201 | Created - Tài nguyên được tạo thành công |
+| 400 | Bad Request - Yêu cầu không hợp lệ |
+| 401 | Unauthorized - Cần xác thực |
+| 403 | Forbidden - Không có quyền truy cập |
+| 404 | Not Found - Tài nguyên không tìm thấy |
+| 429 | Too Many Requests - Vượt quá giới hạn yêu cầu |
+| 500 | Internal Server Error - Lỗi máy chủ |
+
+---
+## 🔒 Authentication
+
+### JWT Token Format
+
+Tất cả requests cần gửi token trong header:
+
+```
+Authorization: Bearer <access_token>
+```
+
+### Token Refresh
+
+Nếu access token hết hạn, sử dụng refresh token:
+
+```
+POST /api/v1/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "<refresh_token>"
+}
+```
+
+---
+
+## 📝 Ghi Chú Quan Trọng
+
+- ✅ Tất cả timestamps sử dụng định dạng ISO 8601
+- ✅ Tất cả IDs sử dụng UUID v4
+- ✅ Request/Response bodies sử dụng JSON
+- ✅ Mặc định pagination: limit=20, page=1
+- ✅ Giới hạn rate limiting: 100 requests/phút/IP
+
+---
+
+## 📞 Hỗ trợ
+
+- **API Documentation:** [https://api.example.com/docs](https://api.example.com/docs)
+- **Issue Tracker:** [https://github.com/example/issues](https://github.com/example/issues)
+- **Email Support:** support@example.com
